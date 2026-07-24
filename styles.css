@@ -948,3 +948,148 @@ img {
     display: none !important;
   }
 }
+
+/* =========================================================
+   CORRECCIÓN PROPORCIÓN JERSEYS 2027
+   Proporción real: 899 x 1599.
+   Menor tamaño, sin deformación y con subida controlada.
+========================================================= */
+
+.jersey-2027-section {
+  overflow: hidden;
+}
+
+.jersey-cards {
+  grid-template-columns: repeat(2, minmax(260px, 330px)) !important;
+  gap: clamp(48px, 6vw, 86px) !important;
+  min-height: 640px !important;
+  margin-top: 56px !important;
+  padding-top: 92px !important;
+  padding-bottom: 110px !important;
+}
+
+.jersey-card {
+  aspect-ratio: 899 / 1599 !important;
+  width: 100% !important;
+  max-width: 330px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.jersey-card::before {
+  inset: 0 !important;
+  border-radius: 24px !important;
+  background-size: cover !important;
+  background-position: center !important;
+  transform: translateY(0) rotateX(0deg) !important;
+  transform-origin: bottom center !important;
+}
+
+.jersey-card::after {
+  border-radius: 24px !important;
+}
+
+.jersey-card img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  transform: translateY(0) scale(0.98) !important;
+  transform-origin: bottom center !important;
+}
+
+.jersey-card figcaption {
+  width: 94% !important;
+  max-width: 94% !important;
+  left: 3%;
+  border-radius: 0 0 18px 18px !important;
+  transform: translateY(34%) rotateX(0deg) !important;
+  opacity: 0 !important;
+}
+
+/* Hover más compacto: el jersey sube menos para no tocar el texto superior */
+@media (hover: hover) and (pointer: fine) {
+  .jersey-card:hover::before {
+    transform: perspective(700px) translateY(30%) rotateX(54deg) !important;
+    filter: brightness(0.48) saturate(1.15) !important;
+  }
+
+  .jersey-card:hover::after {
+    opacity: 0.2 !important;
+  }
+
+  .jersey-card:hover img {
+    width: 100% !important;
+    height: 100% !important;
+    transform: translateY(-20%) scale(1.06) !important;
+    filter:
+      contrast(1.06)
+      brightness(1.06)
+      drop-shadow(0 28px 36px rgba(0, 0, 0, 0.62)) !important;
+  }
+
+  .jersey-card:hover figcaption {
+    opacity: 1 !important;
+    transform: perspective(700px) translateY(78%) rotateX(-18deg) !important;
+  }
+}
+
+/* Click en pantallas grandes táctiles */
+@media (min-width: 901px) {
+  .jersey-card.active::before {
+    transform: perspective(700px) translateY(30%) rotateX(54deg) !important;
+    filter: brightness(0.48) saturate(1.15) !important;
+  }
+
+  .jersey-card.active::after {
+    opacity: 0.2 !important;
+  }
+
+  .jersey-card.active img {
+    width: 100% !important;
+    height: 100% !important;
+    transform: translateY(-20%) scale(1.06) !important;
+    filter:
+      contrast(1.06)
+      brightness(1.06)
+      drop-shadow(0 28px 36px rgba(0, 0, 0, 0.62)) !important;
+  }
+
+  .jersey-card.active figcaption {
+    opacity: 1 !important;
+    transform: perspective(700px) translateY(78%) rotateX(-18deg) !important;
+  }
+}
+
+/* Celular: solo fondo, proporción vertical y sin efecto */
+@media (max-width: 900px) {
+  .jersey-cards {
+    grid-template-columns: 1fr !important;
+    max-width: min(320px, 84vw) !important;
+    gap: 34px !important;
+    min-height: auto !important;
+    margin-top: 38px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .jersey-card {
+    max-width: 320px !important;
+    aspect-ratio: 899 / 1599 !important;
+    overflow: hidden !important;
+  }
+
+  .jersey-card::before {
+    transform: none !important;
+    filter: brightness(0.95) saturate(1.05) !important;
+  }
+
+  .jersey-card::after {
+    opacity: 1 !important;
+  }
+
+  .jersey-card img,
+  .jersey-card figcaption {
+    display: none !important;
+  }
+}
