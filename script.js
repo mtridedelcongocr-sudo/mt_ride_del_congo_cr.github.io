@@ -1,13 +1,28 @@
-const raceDate = new Date("2026-08-15T06:00:00");
+const raceDate = new Date("2027-08-15T06:00:00");
+
+/*
+  Jerseys anteriores con nombres originales:
+  assets/jerseys/jersey-2023.webp
+  assets/jerseys/jersey-2024.webp
+  assets/jerseys/jersey-2025.webp
+  assets/jerseys/jersey-2026.webp
+
+  Jerseys 2027:
+  assets/jerseys/2027/jersey-hombre.webp
+  assets/jerseys/2027/jersey-mujer.webp
+*/
 
 const editions = [
   {
     year: "2027",
     title: "Próxima edición",
     description:
-      "La nueva edición del MTB Ride del Congo llega con ruta recreativa de 65 km y ruta competitiva de 90 km.",
+      "La nueva edición del MTB Ride del Congo llega con ruta recreativa de 65 km, ruta competitiva de 90 km y dos jerseys oficiales.",
     distance: "65 km recreativa · 90 km competitiva",
-    jersey: "assets/jerseys/jersey-2027.webp",
+    jerseys: [
+      "assets/jerseys/2027/jersey-hombre.webp",
+      "assets/jerseys/2027/jersey-mujer.webp"
+    ],
     photos: [
       "assets/ediciones/2027/foto1.webp",
       "assets/ediciones/2027/foto2.webp",
@@ -18,7 +33,7 @@ const editions = [
     year: "2026",
     title: "Edición 2026",
     description:
-      "La nueva edición del MTB Ride del Congo llega con ruta recreativa de 65 km y ruta competitiva de 90 km.",
+      "Una edición marcada por montaña, comunidad y el crecimiento del MTB Ride del Congo.",
     distance: "65 km recreativa · 90 km competitiva",
     jersey: "assets/jerseys/jersey-2026.webp",
     photos: [
@@ -71,9 +86,11 @@ const editions = [
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
 
-menuToggle.addEventListener("click", () => {
-  navLinks.classList.toggle("open");
-});
+if (menuToggle && navLinks) {
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("open");
+  });
+}
 
 document.querySelectorAll(".nav-links a").forEach(link => {
   link.addEventListener("click", () => {
@@ -83,11 +100,40 @@ document.querySelectorAll(".nav-links a").forEach(link => {
 
 function updateCountdown() {
   const daysElement = document.getElementById("daysRemaining");
+
+  if (!daysElement) return;
+
   const today = new Date();
   const difference = raceDate - today;
   const days = Math.max(0, Math.ceil(difference / (1000 * 60 * 60 * 24)));
 
   daysElement.textContent = String(days).padStart(2, "0");
+}
+
+function createJerseyHtml(edition) {
+  if (edition.jerseys && edition.jerseys.length > 0) {
+    return `
+      <div class="edition-jersey edition-jersey-duo">
+        ${edition.jerseys
+          .map((jersey, index) => {
+            const label = index === 0 ? "hombre" : "mujer";
+            return `
+              <img
+                src="${jersey}"
+                alt="Jersey oficial ${label} edición ${edition.year}"
+              >
+            `;
+          })
+          .join("")}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="edition-jersey">
+      <img src="${edition.jersey}" alt="Jersey oficial edición ${edition.year}">
+    </div>
+  `;
 }
 
 function createEditionCard(edition, editionIndex) {
@@ -101,9 +147,7 @@ function createEditionCard(edition, editionIndex) {
       <p>${edition.description}</p>
       <p><strong>${edition.distance}</strong></p>
 
-      <div class="edition-jersey">
-        <img src="${edition.jersey}" alt="Jersey oficial edición ${edition.year}">
-      </div>
+      ${createJerseyHtml(edition)}
     </div>
 
     <div class="slider" data-slider="${editionIndex}">
@@ -147,6 +191,8 @@ function createEditionCard(edition, editionIndex) {
 function renderEditions() {
   const container = document.getElementById("editionsContainer");
 
+  if (!container) return;
+
   editions.forEach((edition, index) => {
     const card = createEditionCard(edition, index);
     container.appendChild(card);
@@ -161,6 +207,8 @@ function setupSliders() {
     const dots = slider.querySelectorAll(".slider-dots button");
     const prevButton = slider.querySelector(".prev-slide");
     const nextButton = slider.querySelector(".next-slide");
+
+    if (images.length === 0 || dots.length === 0 || !prevButton || !nextButton) return;
 
     let currentIndex = 0;
 
@@ -194,6 +242,23 @@ function setupSliders() {
   });
 }
 
+function setupJerseyCards() {
+  const jerseyCards = document.querySelectorAll(".jersey-card");
+
+  jerseyCards.forEach(card => {
+    card.addEventListener("click", () => {
+      jerseyCards.forEach(item => {
+        if (item !== card) {
+          item.classList.remove("active");
+        }
+      });
+
+      card.classList.toggle("active");
+    });
+  });
+}
+
 updateCountdown();
 renderEditions();
 setupSliders();
+setupJerseyCards();

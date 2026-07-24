@@ -17,12 +17,12 @@
         <span>MTB Ride del Congo</span>
       </a>
 
-      <button class="menu-toggle" id="menuToggle">☰</button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
 
       <ul class="nav-links" id="navLinks">
         <li><a href="#edicion-actual">Edición actual</a></li>
         <li><a href="#rutas">Rutas</a></li>
-        <li><a href="#jersey">Jersey</a></li>
+        <li><a href="#jersey">Jerseys</a></li>
         <li><a href="#historia">Historia</a></li>
         <li><a href="#ediciones">Ediciones</a></li>
         <li><a href="#inscripcion">Inscripción</a></li>
@@ -128,19 +128,41 @@
       </div>
     </section>
 
-    <section id="jersey" class="section jersey-section">
-      <div class="jersey-text">
-        <p class="eyebrow">Diseño único por edición</p>
-        <h2>Jersey oficial 2027</h2>
+    <section id="jersey" class="section jersey-2027-section">
+      <div class="section-heading center">
+        <p class="eyebrow">Diseños oficiales</p>
+        <h2>Jerseys edición 2027</h2>
         <p>
-          Cada edición del MTB Ride del Congo cuenta con una camiseta única,
-          creada para representar la identidad del evento, la montaña, la ruta
-          y la comunidad ciclista.
+          Para la edición 2027, MTB Ride del Congo presenta dos diseños oficiales:
+          jersey para hombre y jersey para mujer, manteniendo la esencia de montaña,
+          aventura y amistad que caracteriza al evento.
         </p>
       </div>
 
-      <div class="jersey-preview">
-        <img src="assets/jerseys/jersey-2027.webp" alt="Jersey oficial 2027" />
+      <div class="jersey-cards">
+
+        <figure class="jersey-card jersey-card-men">
+          <img
+            src="assets/jerseys/2027/jersey-hombre.webp"
+            alt="Jersey oficial hombre edición 2027"
+          >
+          <figcaption>
+            <span>Jersey Hombre</span>
+            <small>Edición 2027</small>
+          </figcaption>
+        </figure>
+
+        <figure class="jersey-card jersey-card-women">
+          <img
+            src="assets/jerseys/2027/jersey-mujer.webp"
+            alt="Jersey oficial mujer edición 2027"
+          >
+          <figcaption>
+            <span>Jersey Mujer</span>
+            <small>Edición 2027</small>
+          </figcaption>
+        </figure>
+
       </div>
     </section>
 
@@ -215,15 +237,25 @@
 
     <section id="inscripcion" class="section signup-section">
       <div class="signup-box">
-        <p class="eyebrow">Participá</p>
-        <h2>Inscripción edición 2026</h2>
+        <div class="signup-text">
+          <p class="eyebrow">Participá</p>
+          <h2>Inscripción edición 2027</h2>
 
-        <p>
-          Viví una experiencia MTB llena de montaña, naturaleza, amistad y
-          solidaridad.
-        </p>
+          <p>
+            Viví una experiencia MTB llena de montaña, naturaleza, amistad y
+            solidaridad. Escaneá el código QR para ingresar al formulario oficial
+            de inscripción.
+          </p>
 
-        <a href="#" class="btn btn-primary">Inscribirme ahora</a>
+          <p class="signup-slogan">
+            “Un Ride para hacer Amigos”
+          </p>
+        </div>
+
+        <div class="qr-card">
+          <img src="assets/QR.webp" alt="Código QR para formulario de inscripción">
+          <p>Escaneá para inscribirte</p>
+        </div>
       </div>
     </section>
 
