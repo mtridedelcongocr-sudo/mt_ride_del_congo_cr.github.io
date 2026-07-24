@@ -646,6 +646,15 @@ img {
   letter-spacing: 1px;
 }
 
+.qr-card .qr-link {
+  width: 100%;
+  margin-top: 16px;
+  text-align: center;
+  border-radius: 14px;
+  padding: 13px 18px;
+}
+
+
 .footer {
   padding: 28px 8%;
   text-align: center;
@@ -746,5 +755,196 @@ img {
 
   .jersey-card figcaption {
     transform: perspective(500px) translateY(100%) rotateX(-35deg);
+  }
+}
+
+/* =========================================================
+   AJUSTE FINAL JERSEYS 2027
+   Imágenes verticales 899 x 1599.
+   Estado inicial: el jersey queda oculto detrás del fondo.
+   Hover escritorio: baja el fondo y sube el jersey.
+   Celular: solo se muestra la imagen de fondo, sin efecto.
+========================================================= */
+
+.jersey-2027-section {
+  overflow: hidden;
+}
+
+.jersey-cards {
+  grid-template-columns: repeat(2, minmax(340px, 460px));
+  align-items: center;
+  gap: clamp(70px, 8vw, 130px);
+  min-height: 820px;
+  margin-top: 80px;
+  padding-top: 120px;
+  padding-bottom: 160px;
+}
+
+.jersey-card {
+  aspect-ratio: 899 / 1599;
+  padding: 0;
+  overflow: visible;
+  isolation: isolate;
+  filter: drop-shadow(0 34px 45px rgba(0, 0, 0, 0.58));
+}
+
+.jersey-card::before {
+  z-index: 2;
+  inset: 0;
+  border-radius: 28px;
+  background-size: cover;
+  background-position: center;
+  transform: translateY(0) rotateX(0deg);
+  transform-origin: bottom center;
+  filter: brightness(0.95) saturate(1.05);
+  box-shadow: 0 28px 55px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.65s ease,
+    filter 0.65s ease,
+    box-shadow 0.65s ease;
+}
+
+.jersey-card::after {
+  z-index: 3;
+  border-radius: 28px;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(8, 17, 20, 0.18) 48%,
+      rgba(8, 17, 20, 0.72)
+    );
+  transition: opacity 0.65s ease;
+}
+
+.jersey-card img {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateY(0) scale(0.96);
+  opacity: 1;
+  filter:
+    contrast(1.03)
+    brightness(1)
+    drop-shadow(0 28px 36px rgba(0, 0, 0, 0.55));
+  transition:
+    transform 0.65s ease,
+    filter 0.65s ease,
+    z-index 0s linear 0.12s;
+}
+
+/* La etiqueta también queda detrás del fondo al inicio */
+.jersey-card figcaption {
+  z-index: 1;
+  width: 100%;
+  max-width: 92%;
+  border-radius: 0 0 22px 22px;
+  transform: translateY(42%);
+  opacity: 0;
+  border-top: 3px solid #00d6c9;
+  transition:
+    transform 0.65s ease,
+    opacity 0.65s ease,
+    z-index 0s linear 0.12s;
+}
+
+/* Efecto de escritorio */
+@media (hover: hover) and (pointer: fine) {
+  .jersey-card:hover::before {
+    transform: perspective(700px) translateY(48%) rotateX(62deg);
+    filter: brightness(0.46) saturate(1.2);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65);
+  }
+
+  .jersey-card:hover::after {
+    opacity: 0.18;
+  }
+
+  .jersey-card:hover img {
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    transform: translateY(-38%) scale(1.18);
+    filter:
+      contrast(1.08)
+      brightness(1.08)
+      drop-shadow(0 38px 46px rgba(0, 0, 0, 0.65));
+  }
+
+  .jersey-card:hover figcaption {
+    z-index: 5;
+    opacity: 1;
+    transform: translateY(115%);
+  }
+}
+
+/* Efecto por click para pantallas táctiles grandes, no celulares */
+@media (min-width: 901px) {
+  .jersey-card.active::before {
+    transform: perspective(700px) translateY(48%) rotateX(62deg);
+    filter: brightness(0.46) saturate(1.2);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65);
+  }
+
+  .jersey-card.active::after {
+    opacity: 0.18;
+  }
+
+  .jersey-card.active img {
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    transform: translateY(-38%) scale(1.18);
+    filter:
+      contrast(1.08)
+      brightness(1.08)
+      drop-shadow(0 38px 46px rgba(0, 0, 0, 0.65));
+  }
+
+  .jersey-card.active figcaption {
+    z-index: 5;
+    opacity: 1;
+    transform: translateY(115%);
+  }
+}
+
+/* Celular: solo imagen de fondo, sin jersey, sin texto y sin efecto */
+@media (max-width: 900px) {
+  .jersey-cards {
+    grid-template-columns: 1fr;
+    max-width: min(430px, 88vw);
+    gap: 42px;
+    min-height: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 42px;
+  }
+
+  .jersey-card {
+    aspect-ratio: 899 / 1599;
+    cursor: default;
+    overflow: hidden;
+    filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.48));
+  }
+
+  .jersey-card::before {
+    transform: none !important;
+    filter: brightness(0.95) saturate(1.05) !important;
+    border-radius: 24px;
+  }
+
+  .jersey-card::after {
+    opacity: 1 !important;
+    border-radius: 24px;
+  }
+
+  .jersey-card img,
+  .jersey-card figcaption {
+    display: none !important;
   }
 }

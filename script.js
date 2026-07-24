@@ -244,9 +244,19 @@ function setupSliders() {
 
 function setupJerseyCards() {
   const jerseyCards = document.querySelectorAll(".jersey-card");
+  const desktopQuery = window.matchMedia("(min-width: 901px)");
+
+  function clearActiveCards() {
+    jerseyCards.forEach(card => card.classList.remove("active"));
+  }
 
   jerseyCards.forEach(card => {
     card.addEventListener("click", () => {
+      if (!desktopQuery.matches) {
+        clearActiveCards();
+        return;
+      }
+
       jerseyCards.forEach(item => {
         if (item !== card) {
           item.classList.remove("active");
@@ -255,6 +265,12 @@ function setupJerseyCards() {
 
       card.classList.toggle("active");
     });
+  });
+
+  desktopQuery.addEventListener("change", event => {
+    if (!event.matches) {
+      clearActiveCards();
+    }
   });
 }
 
