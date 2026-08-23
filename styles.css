@@ -289,6 +289,15 @@ img {
   padding-left: 20px;
 }
 
+
+/* =========================================================
+   Jerseys edición 2027
+   Efecto corregido con capas reales:
+   - .jersey-poster baja como una sola imagen completa.
+   - .jersey-product sube desde atrás sin deformarse.
+   - En móvil solo se muestra el poster/fondo.
+========================================================= */
+
 .jersey-2027-section {
   background:
     radial-gradient(circle at top, rgba(0, 214, 201, 0.18), transparent 42%),
@@ -296,130 +305,171 @@ img {
   overflow: hidden;
 }
 
+.jersey-2027-section .section-heading {
+  margin-bottom: 0;
+}
+
 .jersey-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(260px, 360px));
+  grid-template-columns: repeat(2, minmax(250px, 315px));
   justify-content: center;
-  align-items: end;
-  gap: 70px;
-  margin-top: 60px;
-  min-height: 520px;
+  align-items: start;
+  gap: clamp(48px, 7vw, 90px);
+  margin-top: 54px;
+  padding-top: 72px;
+  padding-bottom: 140px;
+  min-height: 650px;
 }
 
 .jersey-card {
-  width: 100%;
-  aspect-ratio: 1;
-  margin: 0;
-  padding: 8px 24px 0;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-rows: 100%;
-  cursor: pointer;
   position: relative;
+  width: 100%;
+  max-width: 315px;
+  aspect-ratio: 899 / 1599;
+  margin: 0;
+  padding: 0;
   isolation: isolate;
-  filter: drop-shadow(0 24px 35px rgba(0, 0, 0, 0.55));
+  overflow: visible;
+  cursor: pointer;
+  filter: drop-shadow(0 24px 36px rgba(0, 0, 0, 0.52));
 }
 
-.jersey-card::before {
-  content: "";
+.jersey-poster {
   position: absolute;
-  z-index: -1;
   inset: 0;
-  background-position: center;
-  background-size: cover;
-  transform-origin: bottom;
-  filter: brightness(0.85) saturate(1.05);
-  transition: 0.5s ease;
-  border-radius: 22px;
+  z-index: 4;
+  border-radius: 24px;
+  overflow: hidden;
+  transform-origin: bottom center;
+  transform: translateY(0) rotateX(0deg);
+  transition:
+    transform 0.62s ease,
+    filter 0.62s ease,
+    box-shadow 0.62s ease;
+  filter: brightness(0.96) saturate(1.04);
+  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.45);
 }
 
-.jersey-card::after {
-  content: "";
+.jersey-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.jersey-product {
   position: absolute;
-  z-index: -1;
   inset: 0;
-  border-radius: 22px;
-  background:
-    linear-gradient(
-      rgba(8, 17, 20, 0.08),
-      rgba(8, 17, 20, 0.78)
-    );
-  transition: 0.5s ease;
-}
-
-.jersey-card-men::before {
-  background-image: url("assets/jerseys/2027/fondo-hombre.webp");
-}
-
-.jersey-card-women::before {
-  background-image: url("assets/jerseys/2027/fondo-mujer.webp");
-}
-
-.jersey-card img {
-  grid-area: 1 / 1;
+  z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: bottom center;
-  place-self: end center;
-  filter: contrast(0.92) brightness(0.85);
-  transition: 0.5s ease;
-  transform-origin: bottom center;
+  object-position: center top;
+  transform-origin: center bottom;
+  transform: translateY(2%) scale(0.92);
+  opacity: 1;
+  transition:
+    transform 0.62s ease,
+    filter 0.62s ease,
+    z-index 0s linear 0.15s;
+  filter:
+    contrast(1.04)
+    brightness(1.04)
+    drop-shadow(0 26px 34px rgba(0, 0, 0, 0.62));
 }
 
-.jersey-card figcaption {
-  grid-area: 1 / 1;
-  width: calc(100% + 48px);
-  padding: 14px 12px 16px;
-  color: #ffffff;
+.jersey-card-label {
+  position: absolute;
+  left: 50%;
+  bottom: -48px;
+  z-index: 1;
+  width: 92%;
+  transform: translateX(-50%);
+  color: var(--gray);
   text-align: center;
-  place-self: end center;
-  transform: perspective(500px) translateY(100%) rotateX(-90deg);
-  backface-visibility: hidden;
-  transform-origin: top;
-  background:
-    linear-gradient(90deg, #050b0d, #101820);
-  border-top: 3px solid #00d6c9;
-  transition: 0.5s ease;
+  font-size: 0.92rem;
+  font-weight: 800;
+  opacity: 0.72;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.jersey-card figcaption span {
-  display: block;
-  font-size: 1.35rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+/* Escritorio: efecto hover */
+@media (hover: hover) and (pointer: fine) {
+  .jersey-card:hover .jersey-poster {
+    transform: perspective(900px) translateY(30%) rotateX(46deg) scaleX(0.98);
+    filter: brightness(0.52) saturate(1.12);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
+  }
+
+  .jersey-card:hover .jersey-product {
+    z-index: 6;
+    transform: translateY(-17%) scale(1.02);
+    filter:
+      contrast(1.08)
+      brightness(1.08)
+      drop-shadow(0 32px 42px rgba(0, 0, 0, 0.72));
+  }
+
+  .jersey-card:hover .jersey-card-label {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
 }
 
-.jersey-card figcaption small {
-  display: block;
-  margin-top: 4px;
-  color: #7ed957;
-  font-weight: 700;
+/* Click para pantallas táctiles grandes */
+@media (min-width: 901px) {
+  .jersey-card.active .jersey-poster {
+    transform: perspective(900px) translateY(30%) rotateX(46deg) scaleX(0.98);
+    filter: brightness(0.52) saturate(1.12);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
+  }
+
+  .jersey-card.active .jersey-product {
+    z-index: 6;
+    transform: translateY(-17%) scale(1.02);
+    filter:
+      contrast(1.08)
+      brightness(1.08)
+      drop-shadow(0 32px 42px rgba(0, 0, 0, 0.72));
+  }
+
+  .jersey-card.active .jersey-card-label {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
 }
 
-.jersey-card:hover img,
-.jersey-card.active img {
-  width: 120%;
-  height: 175%;
-  filter: contrast(1.05) brightness(1);
-  transform: translateY(-8%);
-}
+/* Celular: solo se muestra la imagen de fondo, sin efecto */
+@media (max-width: 900px) {
+  .jersey-cards {
+    grid-template-columns: 1fr;
+    max-width: min(315px, 84vw);
+    margin-left: auto;
+    margin-right: auto;
+    gap: 42px;
+    min-height: auto;
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
 
-.jersey-card:hover::before,
-.jersey-card.active::before {
-  filter: brightness(0.35) saturate(1.15);
-  transform: perspective(500px) rotateX(58deg);
-}
+  .jersey-card {
+    max-width: 315px;
+    overflow: hidden;
+    cursor: default;
+  }
 
-.jersey-card:hover::after,
-.jersey-card.active::after {
-  opacity: 0.65;
-}
+  .jersey-poster {
+    position: absolute;
+    inset: 0;
+    transform: none !important;
+    filter: brightness(0.96) saturate(1.04) !important;
+    border-radius: 24px;
+  }
 
-.jersey-card:hover figcaption,
-.jersey-card.active figcaption {
-  transform: perspective(500px) translateY(100%) rotateX(-28deg);
+  .jersey-product,
+  .jersey-card-label {
+    display: none !important;
+  }
 }
 
 .history-section {
@@ -755,341 +805,5 @@ img {
 
   .jersey-card figcaption {
     transform: perspective(500px) translateY(100%) rotateX(-35deg);
-  }
-}
-
-/* =========================================================
-   AJUSTE FINAL JERSEYS 2027
-   Imágenes verticales 899 x 1599.
-   Estado inicial: el jersey queda oculto detrás del fondo.
-   Hover escritorio: baja el fondo y sube el jersey.
-   Celular: solo se muestra la imagen de fondo, sin efecto.
-========================================================= */
-
-.jersey-2027-section {
-  overflow: hidden;
-}
-
-.jersey-cards {
-  grid-template-columns: repeat(2, minmax(340px, 460px));
-  align-items: center;
-  gap: clamp(70px, 8vw, 130px);
-  min-height: 820px;
-  margin-top: 80px;
-  padding-top: 120px;
-  padding-bottom: 160px;
-}
-
-.jersey-card {
-  aspect-ratio: 899 / 1599;
-  padding: 0;
-  overflow: visible;
-  isolation: isolate;
-  filter: drop-shadow(0 34px 45px rgba(0, 0, 0, 0.58));
-}
-
-.jersey-card::before {
-  z-index: 2;
-  inset: 0;
-  border-radius: 28px;
-  background-size: cover;
-  background-position: center;
-  transform: translateY(0) rotateX(0deg);
-  transform-origin: bottom center;
-  filter: brightness(0.95) saturate(1.05);
-  box-shadow: 0 28px 55px rgba(0, 0, 0, 0.45);
-  transition:
-    transform 0.65s ease,
-    filter 0.65s ease,
-    box-shadow 0.65s ease;
-}
-
-.jersey-card::after {
-  z-index: 3;
-  border-radius: 28px;
-  pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.05),
-      rgba(8, 17, 20, 0.18) 48%,
-      rgba(8, 17, 20, 0.72)
-    );
-  transition: opacity 0.65s ease;
-}
-
-.jersey-card img {
-  position: relative;
-  z-index: 1;
-  grid-area: 1 / 1;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
-  transform: translateY(0) scale(0.96);
-  opacity: 1;
-  filter:
-    contrast(1.03)
-    brightness(1)
-    drop-shadow(0 28px 36px rgba(0, 0, 0, 0.55));
-  transition:
-    transform 0.65s ease,
-    filter 0.65s ease,
-    z-index 0s linear 0.12s;
-}
-
-/* La etiqueta también queda detrás del fondo al inicio */
-.jersey-card figcaption {
-  z-index: 1;
-  width: 100%;
-  max-width: 92%;
-  border-radius: 0 0 22px 22px;
-  transform: translateY(42%);
-  opacity: 0;
-  border-top: 3px solid #00d6c9;
-  transition:
-    transform 0.65s ease,
-    opacity 0.65s ease,
-    z-index 0s linear 0.12s;
-}
-
-/* Efecto de escritorio */
-@media (hover: hover) and (pointer: fine) {
-  .jersey-card:hover::before {
-    transform: perspective(700px) translateY(48%) rotateX(62deg);
-    filter: brightness(0.46) saturate(1.2);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65);
-  }
-
-  .jersey-card:hover::after {
-    opacity: 0.18;
-  }
-
-  .jersey-card:hover img {
-    z-index: 4;
-    width: 100%;
-    height: 100%;
-    transform: translateY(-38%) scale(1.18);
-    filter:
-      contrast(1.08)
-      brightness(1.08)
-      drop-shadow(0 38px 46px rgba(0, 0, 0, 0.65));
-  }
-
-  .jersey-card:hover figcaption {
-    z-index: 5;
-    opacity: 1;
-    transform: translateY(115%);
-  }
-}
-
-/* Efecto por click para pantallas táctiles grandes, no celulares */
-@media (min-width: 901px) {
-  .jersey-card.active::before {
-    transform: perspective(700px) translateY(48%) rotateX(62deg);
-    filter: brightness(0.46) saturate(1.2);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65);
-  }
-
-  .jersey-card.active::after {
-    opacity: 0.18;
-  }
-
-  .jersey-card.active img {
-    z-index: 4;
-    width: 100%;
-    height: 100%;
-    transform: translateY(-38%) scale(1.18);
-    filter:
-      contrast(1.08)
-      brightness(1.08)
-      drop-shadow(0 38px 46px rgba(0, 0, 0, 0.65));
-  }
-
-  .jersey-card.active figcaption {
-    z-index: 5;
-    opacity: 1;
-    transform: translateY(115%);
-  }
-}
-
-/* Celular: solo imagen de fondo, sin jersey, sin texto y sin efecto */
-@media (max-width: 900px) {
-  .jersey-cards {
-    grid-template-columns: 1fr;
-    max-width: min(430px, 88vw);
-    gap: 42px;
-    min-height: auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    margin-top: 42px;
-  }
-
-  .jersey-card {
-    aspect-ratio: 899 / 1599;
-    cursor: default;
-    overflow: hidden;
-    filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.48));
-  }
-
-  .jersey-card::before {
-    transform: none !important;
-    filter: brightness(0.95) saturate(1.05) !important;
-    border-radius: 24px;
-  }
-
-  .jersey-card::after {
-    opacity: 1 !important;
-    border-radius: 24px;
-  }
-
-  .jersey-card img,
-  .jersey-card figcaption {
-    display: none !important;
-  }
-}
-
-/* =========================================================
-   CORRECCIÓN PROPORCIÓN JERSEYS 2027
-   Proporción real: 899 x 1599.
-   Menor tamaño, sin deformación y con subida controlada.
-========================================================= */
-
-.jersey-2027-section {
-  overflow: hidden;
-}
-
-.jersey-cards {
-  grid-template-columns: repeat(2, minmax(260px, 330px)) !important;
-  gap: clamp(48px, 6vw, 86px) !important;
-  min-height: 640px !important;
-  margin-top: 56px !important;
-  padding-top: 92px !important;
-  padding-bottom: 110px !important;
-}
-
-.jersey-card {
-  aspect-ratio: 899 / 1599 !important;
-  width: 100% !important;
-  max-width: 330px !important;
-  padding: 0 !important;
-  overflow: visible !important;
-}
-
-.jersey-card::before {
-  inset: 0 !important;
-  border-radius: 24px !important;
-  background-size: cover !important;
-  background-position: center !important;
-  transform: translateY(0) rotateX(0deg) !important;
-  transform-origin: bottom center !important;
-}
-
-.jersey-card::after {
-  border-radius: 24px !important;
-}
-
-.jersey-card img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  object-position: center bottom !important;
-  transform: translateY(0) scale(0.98) !important;
-  transform-origin: bottom center !important;
-}
-
-.jersey-card figcaption {
-  width: 94% !important;
-  max-width: 94% !important;
-  left: 3%;
-  border-radius: 0 0 18px 18px !important;
-  transform: translateY(34%) rotateX(0deg) !important;
-  opacity: 0 !important;
-}
-
-/* Hover más compacto: el jersey sube menos para no tocar el texto superior */
-@media (hover: hover) and (pointer: fine) {
-  .jersey-card:hover::before {
-    transform: perspective(700px) translateY(30%) rotateX(54deg) !important;
-    filter: brightness(0.48) saturate(1.15) !important;
-  }
-
-  .jersey-card:hover::after {
-    opacity: 0.2 !important;
-  }
-
-  .jersey-card:hover img {
-    width: 100% !important;
-    height: 100% !important;
-    transform: translateY(-20%) scale(1.06) !important;
-    filter:
-      contrast(1.06)
-      brightness(1.06)
-      drop-shadow(0 28px 36px rgba(0, 0, 0, 0.62)) !important;
-  }
-
-  .jersey-card:hover figcaption {
-    opacity: 1 !important;
-    transform: perspective(700px) translateY(78%) rotateX(-18deg) !important;
-  }
-}
-
-/* Click en pantallas grandes táctiles */
-@media (min-width: 901px) {
-  .jersey-card.active::before {
-    transform: perspective(700px) translateY(30%) rotateX(54deg) !important;
-    filter: brightness(0.48) saturate(1.15) !important;
-  }
-
-  .jersey-card.active::after {
-    opacity: 0.2 !important;
-  }
-
-  .jersey-card.active img {
-    width: 100% !important;
-    height: 100% !important;
-    transform: translateY(-20%) scale(1.06) !important;
-    filter:
-      contrast(1.06)
-      brightness(1.06)
-      drop-shadow(0 28px 36px rgba(0, 0, 0, 0.62)) !important;
-  }
-
-  .jersey-card.active figcaption {
-    opacity: 1 !important;
-    transform: perspective(700px) translateY(78%) rotateX(-18deg) !important;
-  }
-}
-
-/* Celular: solo fondo, proporción vertical y sin efecto */
-@media (max-width: 900px) {
-  .jersey-cards {
-    grid-template-columns: 1fr !important;
-    max-width: min(320px, 84vw) !important;
-    gap: 34px !important;
-    min-height: auto !important;
-    margin-top: 38px !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-
-  .jersey-card {
-    max-width: 320px !important;
-    aspect-ratio: 899 / 1599 !important;
-    overflow: hidden !important;
-  }
-
-  .jersey-card::before {
-    transform: none !important;
-    filter: brightness(0.95) saturate(1.05) !important;
-  }
-
-  .jersey-card::after {
-    opacity: 1 !important;
-  }
-
-  .jersey-card img,
-  .jersey-card figcaption {
-    display: none !important;
   }
 }

@@ -39,7 +39,10 @@ const editions = [
     photos: [
       "assets/ediciones/2026/foto1.webp",
       "assets/ediciones/2026/foto2.webp",
-      "assets/ediciones/2026/foto3.webp"
+      "assets/ediciones/2026/foto3.webp",
+      "assets/ediciones/2026/foto4.webp",
+      "assets/ediciones/2026/foto5.webp",
+      "assets/ediciones/2026/foto6.webp"
     ]
   },
   {
@@ -52,7 +55,8 @@ const editions = [
     photos: [
       "assets/ediciones/2025/foto1.webp",
       "assets/ediciones/2025/foto2.webp",
-      "assets/ediciones/2025/foto3.webp"
+      "assets/ediciones/2025/foto3.webp",
+      "assets/ediciones/2025/foto4.webp"
     ]
   },
   {
@@ -65,7 +69,9 @@ const editions = [
     photos: [
       "assets/ediciones/2024/foto1.webp",
       "assets/ediciones/2024/foto2.webp",
-      "assets/ediciones/2024/foto3.webp"
+      "assets/ediciones/2024/foto3.webp",
+      "assets/ediciones/2024/foto4.webp",
+      "assets/ediciones/2024/foto5.webp"
     ]
   },
   {
@@ -78,7 +84,9 @@ const editions = [
     photos: [
       "assets/ediciones/2023/foto1.webp",
       "assets/ediciones/2023/foto2.webp",
-      "assets/ediciones/2023/foto3.webp"
+      "assets/ediciones/2023/foto3.webp",
+      "assets/ediciones/2023/foto4.webp",
+      "assets/ediciones/2023/foto5.webp"
     ]
   }
 ];
