@@ -393,7 +393,6 @@ img {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Escritorio: efecto hover */
 @media (hover: hover) and (pointer: fine) {
   .jersey-card:hover .jersey-poster {
     transform: perspective(900px) translateY(30%) rotateX(46deg) scaleX(0.98);
@@ -416,7 +415,6 @@ img {
   }
 }
 
-/* Click para pantallas táctiles grandes */
 @media (min-width: 901px) {
   .jersey-card.active .jersey-poster {
     transform: perspective(900px) translateY(30%) rotateX(46deg) scaleX(0.98);
@@ -439,7 +437,6 @@ img {
   }
 }
 
-/* Celular: solo se muestra la imagen de fondo, sin efecto */
 @media (max-width: 900px) {
   .jersey-cards {
     grid-template-columns: 1fr;
@@ -806,4 +803,271 @@ img {
   .jersey-card figcaption {
     transform: perspective(500px) translateY(100%) rotateX(-35deg);
   }
+}
+
+/* =========================================================
+   Información extra: categorías, precios, pagos y tallas
+========================================================= */
+
+.categories-section {
+  background:
+    radial-gradient(circle at top left, rgba(126, 217, 87, 0.12), transparent 36%),
+    linear-gradient(180deg, #081114, #101820);
+}
+
+.categories-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.categories-card,
+.recreative-card,
+.price-card,
+.payment-info article,
+.sizing-card {
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 22px 38px rgba(0, 0, 0, 0.22);
+}
+
+.categories-card {
+  padding: 30px;
+}
+
+.categories-card h3,
+.recreative-card h3,
+.price-card h3,
+.payment-info h3,
+.sizing-card h3 {
+  font-size: 1.55rem;
+  margin-bottom: 18px;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.categories-grid article {
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 4px solid var(--turquoise);
+}
+
+.categories-grid span {
+  display: block;
+  color: var(--white);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.94rem;
+}
+
+.categories-grid p {
+  color: var(--gray);
+  margin-top: 4px;
+  font-size: 0.92rem;
+}
+
+.recreative-card {
+  padding: 30px;
+  border-color: rgba(255, 122, 0, 0.55);
+  background:
+    linear-gradient(rgba(255, 122, 0, 0.1), rgba(255, 255, 255, 0.045));
+}
+
+.recreative-card h3 {
+  color: var(--orange);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.recreative-card p {
+  color: var(--gray);
+}
+
+.pricing-section {
+  background: var(--dark-2);
+}
+
+.price-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 430px));
+  justify-content: center;
+  gap: 26px;
+  margin-top: 44px;
+}
+
+.price-card {
+  padding: 30px;
+}
+
+.price-card.featured {
+  border-color: rgba(0, 214, 201, 0.7);
+  box-shadow: 0 0 42px rgba(0, 214, 201, 0.12);
+}
+
+.price-route {
+  color: var(--gray);
+  margin-bottom: 24px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.price-row span {
+  color: var(--gray);
+  font-weight: 800;
+}
+
+.price-row strong {
+  color: var(--green);
+  font-size: 1.65rem;
+}
+
+.payment-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.payment-info article {
+  padding: 24px;
+}
+
+.payment-info p,
+.payment-info small {
+  color: var(--gray);
+}
+
+.payment-info a {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--green);
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.pending-info {
+  display: block;
+  color: var(--orange);
+  margin-top: 8px;
+  font-size: 1rem;
+}
+
+.sizing-section {
+  background:
+    radial-gradient(circle at top right, rgba(0, 214, 201, 0.14), transparent 38%),
+    #081114;
+}
+
+.sizing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.sizing-card {
+  padding: 26px;
+}
+
+.sizing-image {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  margin-bottom: 22px;
+}
+
+.sizing-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sizing-table-wrapper {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.sizing-card table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sizing-card th,
+.sizing-card td {
+  padding: 12px 10px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sizing-card thead th {
+  background: rgba(0, 214, 201, 0.16);
+  color: var(--white);
+  font-weight: 900;
+}
+
+.sizing-card tbody th {
+  text-align: left;
+  color: var(--green);
+}
+
+.sizing-card td {
+  color: var(--gray);
+}
+
+@media (max-width: 950px) {
+  .categories-layout,
+  .price-cards,
+  .payment-info,
+  .sizing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .price-row strong {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-card,
+  .recreative-card,
+  .price-card,
+  .payment-info article,
+  .sizing-card {
+    padding: 22px;
+  }
+}
+
+
+.payment-data {
+  display: block;
+  color: var(--green);
+  margin-top: 8px;
+  font-size: 1.08rem;
+  font-weight: 900;
+  word-break: break-word;
 }
