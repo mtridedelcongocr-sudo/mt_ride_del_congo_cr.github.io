@@ -6,6 +6,7 @@
 
   <title>MTB Ride del Congo</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -74,13 +75,13 @@
 
       <div class="quick-info">
         <article>
-          <span>65 km</span>
-          <p>Ruta recreativa</p>
+          <span>68.1 km</span>
+          <p>Ruta recreativa · GPX 2027</p>
         </article>
 
         <article>
-          <span>90 km</span>
-          <p>Ruta competitiva</p>
+          <span>90.6 km</span>
+          <p>Ruta competitiva · GPX 2027</p>
         </article>
 
         <article>
@@ -97,36 +98,105 @@
 
     <section id="rutas" class="section routes-section">
       <div class="section-heading">
-        <p class="eyebrow">Modalidades</p>
+        <p class="eyebrow">Recorridos oficiales 2027</p>
         <h2>Rutas del evento</h2>
+        <p>
+          Explorá los recorridos directamente en el mapa. Podés cambiar entre la
+          ruta recreativa y la competitiva, consultar el perfil de elevación y
+          descargar el GPX para tu dispositivo o aplicación de ciclismo.
+        </p>
       </div>
 
-      <div class="routes-grid">
+      <div class="route-selector" role="group" aria-label="Seleccionar ruta">
+        <button class="route-tab active" type="button" data-route="short">
+          <span>Ruta Recreativa</span>
+          <strong>68.1 km</strong>
+        </button>
+        <button class="route-tab" type="button" data-route="long">
+          <span>Ruta Competitiva</span>
+          <strong>90.6 km</strong>
+        </button>
+      </div>
+
+      <div class="route-explorer">
+        <div class="route-map-panel">
+          <div id="routeMap" class="route-map" aria-label="Mapa interactivo de las rutas 2027"></div>
+          <div class="map-legend">
+            <span><i class="legend-dot legend-short"></i> Recreativa</span>
+            <span><i class="legend-dot legend-long"></i> Competitiva</span>
+          </div>
+        </div>
+
+        <aside class="route-details">
+          <p class="eyebrow" id="routeType">Ruta recreativa</p>
+          <h3 id="routeName">Recorrido corto 2027</h3>
+          <p id="routeDescription" class="route-description">
+            Recorrido pensado para disfrutar la montaña, los paisajes y el espíritu del Ride del Congo.
+          </p>
+
+          <div class="route-stats">
+            <article>
+              <span id="routeDistance">68.1</span>
+              <small>km</small>
+              <p>Distancia</p>
+            </article>
+            <article>
+              <span id="routeGain">1,363</span>
+              <small>m</small>
+              <p>Ascenso</p>
+            </article>
+            <article>
+              <span id="routeMaxEle">2,103</span>
+              <small>m</small>
+              <p>Altitud máx.</p>
+            </article>
+            <article>
+              <span id="routeMinEle">199</span>
+              <small>m</small>
+              <p>Altitud mín.</p>
+            </article>
+          </div>
+
+          <div class="elevation-wrap">
+            <div class="elevation-heading">
+              <strong>Perfil de elevación</strong>
+              <span id="elevationRange">199 m — 2,103 m</span>
+            </div>
+            <canvas id="elevationChart" class="elevation-chart" height="180" aria-label="Perfil de elevación de la ruta"></canvas>
+          </div>
+
+          <a id="routeDownload" class="btn btn-primary route-download" href="assets/routes/ride-del-congo-ruta-corta-2027.gpx" download>
+            Descargar GPX
+          </a>
+        </aside>
+      </div>
+
+      <div class="routes-grid route-summary-grid">
         <article class="route-card">
           <h3>Ruta Recreativa</h3>
-          <strong>65 km</strong>
+          <strong>68.1 km</strong>
           <p>
             Ideal para quienes desean vivir la aventura, disfrutar la naturaleza
             y compartir con otros ciclistas.
           </p>
           <ul>
-            <li>Nivel: intermedio</li>
-            <li>Enfoque: experiencia y aventura</li>
-            <li>Ambiente: recreativo</li>
+            <li>Ascenso aproximado: 1,363 m</li>
+            <li>Altitud máxima: 2,103 m</li>
+            <li>GPX oficial 2027 incluido</li>
           </ul>
         </article>
 
         <article class="route-card featured">
           <h3>Ruta Competitiva</h3>
-          <strong>90 km</strong>
+          <strong>90.6 km</strong>
           <p>
             Diseñada para ciclistas que buscan un mayor desafío físico y técnico
             en una prueba tipo maratón.
           </p>
           <ul>
-            <li>Nivel: avanzado</li>
-            <li>Enfoque: competencia</li>
-            <li>Modalidad: maratón MTB</li>
+            <li>Ascenso aproximado: 1,663 m</li>
+            <li>Altitud máxima: 2,103 m</li>
+            <li>GPX oficial 2027 incluido</li>
           </ul>
         </article>
       </div>
@@ -585,6 +655,7 @@
     <p>MTB Ride del Congo · “Un Ride para hacer Amigos”</p>
   </footer>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
