@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba Cloudflare Turnstile</title>
+    <title>Prueba técnica · MTB Ride del Congo</title>
 
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
@@ -12,7 +12,9 @@
 </head>
 
 <body>
-    <h1>Prueba de seguridad MTB</h1>
+    <h1>Prueba técnica · MTB Ride del Congo</h1>
+    <p>Cloudflare Workers → Google Apps Script → Google Sheets.</p>
+    <p>Se enviarán exclusivamente datos ficticios. No es una inscripción real.</p>
 
     <div
       class="cf-turnstile"
@@ -21,19 +23,43 @@
 
     <br>
 
-    <button id="enviar" onclick="probarConexion()">
-      Probar conexión segura
+    <button id="enviar" type="button" onclick="probarConexion()">
+      Probar inscripción individual
     </button>
 
-    <pre id="resultado">Esperando prueba...</pre>
+    <pre id="resultado" role="status" aria-live="polite">Esperando prueba...</pre>
 
     <script>
       const WORKER_URL =
         "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev";
 
+      const inscripcionPrueba = {
+        tipoInscripcion: "individual",
+        categoriaPareja: "",
+        participantes: [
+          {
+            nombre: "CICLISTA DE PRUEBA",
+            identificacion: "TEST987654",
+            sexo: "male",
+            fechaNacimiento: "1995-05-15",
+            telefono: "88888888",
+            correo: "prueba@example.com",
+            modalidad: "competitive",
+            categoria: "open",
+            jersey: true,
+            disenoJersey: "men",
+            tallaJersey: "L"
+          }
+        ],
+        metodoPago: "sinpe",
+        referenciaPago: "88888888",
+        comentarios: "PRUEBA TECNICA - NO ES UNA INSCRIPCION REAL"
+      };
+
       async function probarConexion() {
         const resultado = document.getElementById("resultado");
         const boton = document.getElementById("enviar");
+        if (boton.disabled) return;
 
         const token = document.querySelector(
           '[name="cf-turnstile-response"]'
@@ -46,7 +72,7 @@
         }
 
         boton.disabled = true;
-        resultado.textContent = "Verificando...";
+        resultado.textContent = "Enviando inscripción ficticia al Worker...";
 
         try {
           const response = await fetch(
@@ -57,27 +83,62 @@
                 "Content-Type": "application/json"
               },
               body: JSON.stringify({
-                prueba: true,
-                turnstileToken: token
+                turnstileToken: token,
+                inscripcion: inscripcionPrueba
               })
             }
           );
 
-          const data = await response.json();
+          const texto = await response.text();
+          let data;
+          try {
+            data = JSON.parse(texto);
+          } catch {
+            resultado.textContent =
+              "Código HTTP: " + response.status +
+              "\nsuccess: no disponible" +
+              "\nMensaje: El servidor no devolvió una respuesta JSON válida." +
+              "\nNo se pudo confirmar el guardado en Google Sheets.";
+            return;
+          }
 
-          resultado.textContent =
-            "Código HTTP: " + response.status +
-            "\n\n" + JSON.stringify(data, null, 2);
+          if (!data || typeof data !== "object" || Array.isArray(data)) {
+            resultado.textContent =
+              "Código HTTP: " + response.status +
+              "\nsuccess: no disponible" +
+              "\nMensaje: El formato de la respuesta no es válido." +
+              "\nNo se pudo confirmar el guardado en Google Sheets.";
+            return;
+          }
+
+          const mensaje = data.message ?? data.mensaje ?? data.error ?? "Sin mensaje de respuesta.";
+          const lineas = [
+            "Código HTTP: " + response.status,
+            "success: " + (data.success === undefined ? "no disponible" : JSON.stringify(data.success)),
+            "Mensaje: " + (typeof mensaje === "string" ? mensaje : JSON.stringify(mensaje))
+          ];
+          if (data.idInscripcion != null) lineas.push("idInscripcion: " + data.idInscripcion);
+          if (data.estadoPago != null) lineas.push("estadoPago: " + data.estadoPago);
+          lineas.push(response.ok && data.success === true
+            ? "El servidor informó que la prueba fue procesada correctamente. Verificá la fila ficticia en Google Sheets; esto no confirma el pago."
+            : "La respuesta no confirma el guardado de la inscripción. Revisá el error antes de repetir la prueba.");
+
+          resultado.textContent = lineas.join("\n");
 
         } catch (error) {
           resultado.textContent =
-            "Error: " + error.message;
+            "Error de conexión: " + error.message +
+            "\nNo se recibió una confirmación. Revisá Google Sheets antes de repetir para evitar duplicados.";
         } finally {
           boton.disabled = false;
 
           // Los tokens de Turnstile son de un solo uso.
           if (window.turnstile) {
-            turnstile.reset();
+            try {
+              turnstile.reset();
+            } catch {
+              resultado.textContent += "\nNo se pudo restablecer Turnstile. Recargá la página para obtener un token nuevo.";
+            }
           }
         }
       }
