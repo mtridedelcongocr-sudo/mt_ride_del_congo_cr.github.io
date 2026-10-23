@@ -1,0 +1,21 @@
+const WORKER_URL = "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev/";
+
+fetch(`${WORKER_URL}/api/inscripciones`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        prueba: true,
+        mensaje: "Conexión desde GitHub Pages"
+    })
+})
+.then(async response => {
+    const data = await response.json();
+
+    console.log("Código HTTP:", response.status);
+    console.log("Respuesta de Cloudflare:", data);
+})
+.catch(error => {
+    console.error("Error de conexión:", error);
+});
