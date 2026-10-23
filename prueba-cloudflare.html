@@ -1,21 +1,70 @@
-<script>const WORKER_URL = "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev";
+<!DOCTYPE html>
+<html lang="es">
 
-fetch(`${WORKER_URL}/api/inscripciones`, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        prueba: true,
-        mensaje: "Conexión desde GitHub Pages"
-    })
-})
-.then(async response => {
-    const data = await response.json();
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Cloudflare Workers</title>
+</head>
 
-    console.log("Código HTTP:", response.status);
-    console.log("Respuesta de Cloudflare:", data);
-})
-.catch(error => {
-    console.error("Error de conexión:", error);
-});</script>
+<body>
+
+    <h1>Prueba de conexión con Cloudflare</h1>
+
+    <button onclick="probarConexion()">
+        Probar conexión
+    </button>
+
+    <h3>Resultado:</h3>
+
+    <pre id="resultado">Esperando prueba...</pre>
+
+    <script>
+
+        const WORKER_URL =
+            "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev";
+
+        async function probarConexion() {
+
+            const resultado = document.getElementById("resultado");
+
+            resultado.textContent = "Conectando con Cloudflare...";
+
+            try {
+
+                const response = await fetch(
+                    `${WORKER_URL}/api/inscripciones`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            prueba: true,
+                            mensaje: "Conexión desde GitHub Pages"
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                resultado.textContent =
+                    "Código HTTP: " + response.status +
+                    "\n\nRespuesta:\n" +
+                    JSON.stringify(data, null, 2);
+
+            } catch (error) {
+
+                resultado.textContent =
+                    "Error de conexión:\n" + error.message;
+
+                console.error(error);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
