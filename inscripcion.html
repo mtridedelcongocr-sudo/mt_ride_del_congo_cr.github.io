@@ -19,7 +19,7 @@
       <p class="eyebrow">Un Ride para hacer Amigos</p>
       <h1>Tu próxima aventura<br>empieza aquí.</h1>
       <p>Prepará tus datos, elegí cómo vivir la montaña y revisá tu inscripción.</p>
-      <p class="demo-notice" id="submissionNotice"><strong>Formulario de prueba.</strong> Usá datos ficticios. El envío está desactivado: no se envían ni guardan inscripciones y no se confirman pagos.</p>
+      <p class="demo-notice" id="submissionNotice">La inscripción se enviará a la organización. El pago queda pendiente de verificación.</p>
     </section>
     <div class="registration-layout">
       <form id="registrationForm">
@@ -68,7 +68,7 @@
         <section class="form-card" aria-labelledby="paymentHeading">
           <p class="step-label">03 / Información del pago</p>
           <h2 id="paymentHeading">Un pago por inscripción</h2>
-          <p class="field-help" id="paymentNotice">En esta prueba no realicés pagos. La recepción del formulario no equivale a la aprobación del pago.</p>
+          <p class="field-help" id="paymentNotice">La recepción del formulario no equivale a la aprobación del pago por la organización.</p>
           <label for="paymentMethod">Método de pago *</label>
           <select id="paymentMethod" required><option value="">Seleccioná el método</option><option value="sinpe">SINPE Móvil</option><option value="transfer">Transferencia bancaria</option><option value="store" disabled>Establecimiento autorizado · por definir</option></select>
           <div id="paymentDetail" hidden><label id="paymentLabel" for="paymentReference"></label><input id="paymentReference" disabled required maxlength="80"><p class="field-help" id="paymentHelp"></p></div>
@@ -77,13 +77,38 @@
           <p class="step-label">04 / Revisá tus datos</p>
           <h2 id="reviewHeading">Todo listo para revisar</h2>
           <label for="comments">Comentario opcional</label><textarea id="comments" rows="3" maxlength="500" placeholder="¿Algo que debamos saber?"></textarea>
-          <p class="privacy-note" id="submissionPrivacy">En modo de prueba, los datos de inscripción se procesan únicamente en la memoria de esta página: no se envían ni se guardan en almacenamiento local y se pierden al recargar. La verificación de seguridad utiliza Cloudflare Turnstile. Antes de abrir inscripciones reales se publicarán las condiciones de privacidad y la autorización para menores.</p>
-          <label class="check-line"><input id="demoConsent" type="checkbox" required><span id="submissionConsent">Entiendo que esta es una prueba y que no quedaré inscrito/a. *</span></label>
-          <div id="turnstileContainer" hidden>
+          <section class="privacy-notice" aria-labelledby="privacyHeading">
+            <h3 id="privacyHeading">Aviso de privacidad y tratamiento de datos personales</h3>
+            <p>MTB Ride del Congo 2027 recopila los datos proporcionados en este formulario, incluyendo nombre completo, identificación, fecha de nacimiento, sexo, teléfono, correo electrónico, categoría de participación e información de referencia de pago.</p>
+            <p>Los datos se utilizarán para gestionar las inscripciones, organizar las categorías, verificar los pagos, coordinar la entrega de jerseys y comunicar información relacionada con el evento.</p>
+            <p>La información se almacenará de forma privada y estará disponible únicamente para el personal autorizado de la organización y los proveedores tecnológicos necesarios para gestionar el servicio. No se publicarán identificaciones, teléfonos ni correos electrónicos de los participantes.</p>
+            <p>Los campos obligatorios son necesarios para tramitar la inscripción.</p>
+            <p>Las personas participantes podrán solicitar acceso, corrección o eliminación de sus datos cuando corresponda legalmente, utilizando los siguientes datos de contacto:</p>
+            <dl class="privacy-contact">
+              <dt>Responsable:</dt><dd>[NOMBRE DEL ORGANIZADOR]</dd>
+              <dt>Correo electrónico:</dt><dd>[CORREO DE CONTACTO]</dd>
+              <dt>Dirección:</dt><dd>[DIRECCIÓN DE CONTACTO]</dd>
+              <dt>Conservación de los datos:</dt><dd>[PLAZO DE CONSERVACIÓN]</dd>
+            </dl>
+            <p>El tratamiento de los datos se realizará conforme a la Ley N.º 8968 de Costa Rica.</p>
+          </section>
+          <div class="privacy-consents">
+            <p class="field-help">Cada participante adulto debe aceptar personalmente el aviso. Una persona no acepta por su pareja. La autorización del representante legal para menores está pendiente de implementación; por ahora no se pueden enviar inscripciones de menores.</p>
+            <div id="privacyParticipant1">
+              <label class="check-line"><input id="privacyConsent1" name="privacyConsent1" type="checkbox" required aria-describedby="privacyHeading privacyStatus1"><span><strong>Participante 1 *</strong> He leído y comprendido el aviso de privacidad y autorizo expresamente el tratamiento de mis datos personales para gestionar mi inscripción en MTB Ride del Congo 2027.</span></label>
+              <p class="field-help" id="privacyStatus1" aria-live="polite"></p>
+            </div>
+            <div id="privacyParticipant2" hidden>
+              <label class="check-line"><input id="privacyConsent2" name="privacyConsent2" type="checkbox" required disabled aria-describedby="privacyHeading privacyStatus2"><span><strong>Participante 2 *</strong> He leído y comprendido el aviso de privacidad y autorizo expresamente el tratamiento de mis datos personales para gestionar mi inscripción en MTB Ride del Congo 2027.</span></label>
+              <p class="field-help" id="privacyStatus2" aria-live="polite"></p>
+            </div>
+          </div>
+          <p class="privacy-note">La versión del aviso y la fecha de aceptación se mantienen temporalmente en esta página. Su almacenamiento real requiere soporte adicional en Cloudflare Workers y Google Apps Script; todavía no se envían ni se guardan en el servidor. El identificador de reintento también se conserva solo en memoria y se pierde al recargar. La verificación de seguridad utiliza Cloudflare Turnstile.</p>
+          <div id="turnstileContainer">
             <p class="field-help">Completá la verificación de seguridad antes de enviar.</p>
             <div class="cf-turnstile" data-sitekey="0x4AAAAAAFi9Cbz-jAwnUR7X" data-size="flexible"></div>
           </div>
-          <button id="submitRegistration" class="btn btn-primary review-button" type="submit">Revisar inscripción de prueba</button>
+          <button id="submitRegistration" class="btn btn-primary review-button" type="submit">Enviar inscripción</button>
           <div id="formResult" class="form-result" role="status" aria-live="polite" tabindex="-1" hidden></div>
         </section>
       </form>
@@ -93,7 +118,7 @@
         <div class="total-row"><span>Total estimado</span><strong id="totalAmount">₡0</strong></div>
         <p class="field-help">Precios publicados por persona. Jersey opcional: ₡7.000 adicionales.</p>
         <div class="summary-prices"><p>Competitiva <strong>₡28.000</strong></p><p>Recreativa <strong>₡18.000</strong></p><p>Jersey <strong>+ ₡7.000</strong></p></div>
-        <p class="pending-note">La tarifa de parejas y las reglas de categorías están pendientes de confirmación. Este cálculo suma los precios individuales como referencia de prueba.</p>
+        <p class="pending-note">La tarifa de parejas y las reglas de categorías están pendientes de confirmación. Este cálculo suma los precios individuales como referencia.</p>
         <img class="summary-logo" src="assets/logo.webp" alt="MTB Ride del Congo">
         <p class="summary-motto">Montaña, naturaleza y amistad.</p>
       </aside>

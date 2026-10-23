@@ -1,12 +1,16 @@
 "use strict";
 
-const ENABLE_REAL_SUBMISSION = false;
+const ENABLE_REAL_SUBMISSION = true;
 const REGISTRATION_API_URL = "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev/api/inscripciones";
 let submissionInProgress = false;
 let submissionConfirmed = false;
 let pendingRequest = null;
+const PRIVACY_NOTICE_VERSION = "1.0";
+// Metadatos internos: no se envían hasta que Worker y Apps Script los soporten.
+const privacyAcceptances = new Map();
+let submissionPrivacyRecord = null;
 
-// Configuración pública de la demostración; no contiene credenciales.
+// Configuración pública del formulario; no contiene credenciales.
 const registrationConfig = {
   prices: { competitive: 28000, recreational: 18000, jersey: 7000 },
   categories: [
@@ -164,7 +168,44 @@ function updateForm() {
       field(2,"sex").setCustomValidity("Revisá que el sexo de ambos participantes coincida con la categoría de pareja elegida.");
     }
   }
+  updatePrivacyConsents();
   updateSummary();
+}
+
+function updatePrivacyConsents() {
+  const now = new Date();
+  for (const index of [1, 2]) {
+    const active = activeParticipants().includes(index);
+    const consent = document.getElementById(`privacyConsent${index}`);
+    const birth = field(index, "birth");
+    const birthDate = birth.value;
+    let minor = false;
+    if (birthDate) {
+      const [year, month, day] = birthDate.split("-").map(Number);
+      let age = now.getFullYear() - year;
+      if (now.getMonth() + 1 < month || (now.getMonth() + 1 === month && now.getDate() < day)) age--;
+      minor = age < 18;
+    }
+    const identity = JSON.stringify([field(index, "name").value.trim(), field(index, "identification").value.trim(), birthDate]);
+    const previous = privacyAcceptances.get(index);
+    if (!active || minor || (previous && previous.identity !== identity)) {
+      consent.checked = false;
+      privacyAcceptances.delete(index);
+    }
+    document.getElementById(`privacyParticipant${index}`).hidden = !active;
+    consent.disabled = !active || minor;
+    consent.required = active && !minor;
+    consent.setCustomValidity(active && !minor && !consent.checked
+      ? `El participante ${index} debe leer y aceptar personalmente el aviso de privacidad para continuar.` : "");
+    const minorMessage = "La autorización del representante legal está pendiente de implementación. No se puede enviar la inscripción de este participante menor de edad.";
+    birth.setCustomValidity(active && minor ? minorMessage : "");
+    document.getElementById(`privacyStatus${index}`).textContent = active && minor ? minorMessage : "";
+    if (active && !minor && consent.checked && !privacyAcceptances.has(index)) {
+      privacyAcceptances.set(index, { identity, versionAviso: PRIVACY_NOTICE_VERSION, fechaAceptacion: now.toISOString() });
+    } else if (!consent.checked) {
+      privacyAcceptances.delete(index);
+    }
+  }
 }
 
 function updateSummary() {
@@ -196,7 +237,7 @@ function updatePayment() {
   input.pattern = method === "sinpe" ? "[+0-9 ()-]{8,24}" : ".*\\S.*";
   document.getElementById("paymentLabel").textContent = method === "sinpe" ? "Teléfono desde el que se realizó el SINPE *" : "Referencia o número de transferencia *";
   document.getElementById("paymentHelp").textContent = method === "sinpe"
-    ? (ENABLE_REAL_SUBMISSION ? "Ingresá el teléfono desde el que se realizó el pago." : "Usá un número ficticio para esta demostración.")
+    ? "Ingresá el teléfono desde el que se realizó el pago."
     : "No ingresés claves bancarias ni números de cuenta.";
 }
 
@@ -248,13 +289,21 @@ form.addEventListener("submit", async event => {
   updateForm();
   if (!form.reportValidity()) return;
   const datos = construirDatosInscripcion();
+  submissionPrivacyRecord = {
+    inscripcion: datos,
+    consentimientos: activeParticipants().map(index => ({
+      participante: index,
+      versionAviso: privacyAcceptances.get(index)?.versionAviso,
+      fechaAceptacion: privacyAcceptances.get(index)?.fechaAceptacion
+    }))
+  };
   const cantidadEsperada = datos.tipoInscripcion === "pair" ? 2 : 1;
   if (datos.participantes.length !== cantidadEsperada) {
     showSubmissionMessage("Revisá los participantes", "La inscripción individual requiere una persona y la inscripción en pareja requiere dos. No se ha enviado la información.", true);
     return;
   }
   if (!ENABLE_REAL_SUBMISSION) {
-    showSubmissionMessage("Formulario completo · demostración", `${datos.participantes.length} participante(s) validado(s). La información está preparada para enviarse. El envío real está desactivado: no se ha enviado ni guardado ninguna inscripción ni confirmado el pago.`);
+    showSubmissionMessage("Envío temporalmente deshabilitado", "El envío no está disponible en este momento. Intentá nuevamente cuando la organización lo habilite.", true);
     return;
   }
   const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
@@ -320,10 +369,8 @@ form.addEventListener("submit", async event => {
   }
 });
 if (ENABLE_REAL_SUBMISSION) {
-  document.getElementById("submissionNotice").textContent = "Envío habilitado. La inscripción se enviará a la organización mediante Cloudflare Workers. El pago queda pendiente de verificación.";
-  document.getElementById("paymentNotice").textContent = "La recepción de la inscripción no equivale a la aprobación del pago.";
-  document.getElementById("submissionPrivacy").textContent = "Al enviar, los datos de inscripción se transmiten a la organización mediante Cloudflare Workers. El identificador de reintento se conserva solo en memoria y se pierde al recargar; no se utiliza almacenamiento local. La verificación de seguridad utiliza Cloudflare Turnstile. Antes de abrir inscripciones reales se publicarán las condiciones de privacidad y la autorización para menores.";
-  document.getElementById("submissionConsent").textContent = "Entiendo que se enviarán estos datos a la organización y que el pago quedará pendiente de verificación. *";
+  document.getElementById("submissionNotice").textContent = "La inscripción se enviará a la organización. El pago queda pendiente de verificación.";
+  document.getElementById("paymentNotice").textContent = "La recepción del formulario no equivale a la aprobación del pago por la organización.";
   document.getElementById("turnstileContainer").hidden = false;
   document.getElementById("submitRegistration").textContent = "Enviar inscripción";
 }
