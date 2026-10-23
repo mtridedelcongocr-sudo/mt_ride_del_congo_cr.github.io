@@ -8,6 +8,7 @@ let pendingRequest = null;
 const PRIVACY_NOTICE_VERSION = "1.0";
 // Metadatos internos: no se envían hasta que Worker y Apps Script los soporten.
 const privacyAcceptances = new Map();
+const rulesAcceptanceIdentities = new Map();
 let submissionPrivacyRecord = null;
 
 // Configuración pública del formulario; no contiene credenciales.
@@ -151,9 +152,6 @@ function updateForm() {
         ageMessage += " E-Bike no tiene un límite de edad definido.";
       }
     }
-    if (age !== null && age < 18) {
-      ageMessage += " Participante menor de edad según la referencia de competencia: la inscripción real requerirá la autorización de su representante. El procedimiento está pendiente de definir.";
-    }
     field(index, "age").textContent = ageMessage;
   }
   const normalizeId = value => value.replace(/[ .-]/g, "").toUpperCase();
@@ -179,28 +177,32 @@ function updatePrivacyConsents() {
     const consent = document.getElementById(`privacyConsent${index}`);
     const birth = field(index, "birth");
     const birthDate = birth.value;
-    let minor = false;
-    if (birthDate) {
-      const [year, month, day] = birthDate.split("-").map(Number);
-      let age = now.getFullYear() - year;
-      if (now.getMonth() + 1 < month || (now.getMonth() + 1 === month && now.getDate() < day)) age--;
-      minor = age < 18;
-    }
     const identity = JSON.stringify([field(index, "name").value.trim(), field(index, "identification").value.trim(), birthDate]);
+    const rulesConsent = document.getElementById(`rulesConsent${index}`);
+    const rulesIdentity = rulesAcceptanceIdentities.get(index);
+    if (!active || (rulesIdentity && rulesIdentity !== identity)) {
+      rulesConsent.checked = false;
+      rulesAcceptanceIdentities.delete(index);
+    }
+    document.getElementById(`rulesParticipant${index}`).hidden = !active;
+    rulesConsent.disabled = !active;
+    rulesConsent.required = active;
+    rulesConsent.setCustomValidity(active && !rulesConsent.checked
+      ? `El participante ${index} debe leer y aceptar personalmente el reglamento de participación para continuar.` : "");
+    if (active && rulesConsent.checked) rulesAcceptanceIdentities.set(index, identity);
+    else rulesAcceptanceIdentities.delete(index);
     const previous = privacyAcceptances.get(index);
-    if (!active || minor || (previous && previous.identity !== identity)) {
+    if (!active || (previous && previous.identity !== identity)) {
       consent.checked = false;
       privacyAcceptances.delete(index);
     }
     document.getElementById(`privacyParticipant${index}`).hidden = !active;
-    consent.disabled = !active || minor;
-    consent.required = active && !minor;
-    consent.setCustomValidity(active && !minor && !consent.checked
+    consent.disabled = !active;
+    consent.required = active;
+    consent.setCustomValidity(active && !consent.checked
       ? `El participante ${index} debe leer y aceptar personalmente el aviso de privacidad para continuar.` : "");
-    const minorMessage = "La autorización del representante legal está pendiente de implementación. No se puede enviar la inscripción de este participante menor de edad.";
-    birth.setCustomValidity(active && minor ? minorMessage : "");
-    document.getElementById(`privacyStatus${index}`).textContent = active && minor ? minorMessage : "";
-    if (active && !minor && consent.checked && !privacyAcceptances.has(index)) {
+    document.getElementById(`privacyStatus${index}`).textContent = "";
+    if (active && consent.checked && !privacyAcceptances.has(index)) {
       privacyAcceptances.set(index, { identity, versionAviso: PRIVACY_NOTICE_VERSION, fechaAceptacion: now.toISOString() });
     } else if (!consent.checked) {
       privacyAcceptances.delete(index);

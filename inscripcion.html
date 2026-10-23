@@ -93,7 +93,7 @@
             <p>El tratamiento de los datos se realizará conforme a la Ley N.º 8968 de Costa Rica.</p>
           </section>
           <div class="privacy-consents">
-            <p class="field-help">Cada participante adulto debe aceptar personalmente el aviso. Una persona no acepta por su pareja. La autorización del representante legal para menores está pendiente de implementación; por ahora no se pueden enviar inscripciones de menores.</p>
+            <p class="field-help">Cada participante debe aceptar personalmente el aviso. Una persona no acepta por su pareja.</p>
             <div id="privacyParticipant1">
               <label class="check-line"><input id="privacyConsent1" name="privacyConsent1" type="checkbox" required aria-describedby="privacyHeading privacyStatus1"><span><strong>Participante 1 *</strong> He leído y comprendido el aviso de privacidad y autorizo expresamente el tratamiento de mis datos personales para gestionar mi inscripción en MTB Ride del Congo 2027.</span></label>
               <p class="field-help" id="privacyStatus1" aria-live="polite"></p>
@@ -104,6 +104,27 @@
             </div>
           </div>
           <p class="privacy-note">La versión del aviso y la fecha de aceptación se mantienen temporalmente en esta página. Su almacenamiento real requiere soporte adicional en Cloudflare Workers y Google Apps Script; todavía no se envían ni se guardan en el servidor. El identificador de reintento también se conserva solo en memoria y se pierde al recargar. La verificación de seguridad utiliza Cloudflare Turnstile.</p>
+          <section class="privacy-notice" aria-labelledby="rulesHeading">
+            <h3 id="rulesHeading">Reglamento de participación</h3>
+            <p>Durante MTB Ride del Congo 2027, cada participante debe cumplir las siguientes reglas:</p>
+            <p><strong>1. Normas de tránsito.</strong> Respetar las normas de tránsito aplicables, circular por el lado derecho de la vía, no llevar más de una persona en la bicicleta salvo que esté especialmente acondicionada para ello y no sujetarse a vehículos en marcha.</p>
+            <p><strong>2. Protección.</strong> Utilizar casco de protección adecuado para la actividad.</p>
+            <p><strong>3. Alcohol y drogas.</strong> No participar bajo los efectos del alcohol ni de drogas.</p>
+            <p><strong>4. Recorrido y señalización.</strong> Seguir el recorrido y transitar por el espacio señalado por la organización, detrás de los vehículos motorizados que delimitan la punta del grupo.</p>
+            <p><strong>5. Instrucciones de la organización.</strong> Acatar las disposiciones del comité organizador durante el evento, que cuenta con modalidades recreativa y competitiva.</p>
+            <p><strong>6. Rifas.</strong> Para participar en las rifas, estar inscrito/a en MTB Ride del Congo.</p>
+            <p><strong>7. Abandono del recorrido.</strong> Si se abandona la actividad, regresar por el mismo recorrido y guiarse por la señalización.</p>
+          </section>
+          <div class="privacy-consents">
+            <p class="field-help">Cada participante debe leer y aceptar personalmente el reglamento. Esta aceptación es independiente del consentimiento de privacidad.</p>
+            <div id="rulesParticipant1">
+              <label class="check-line"><input id="rulesConsent1" name="rulesConsent1" type="checkbox" required aria-describedby="rulesHeading"><span><strong>Participante 1 *</strong> He leído y acepto el reglamento de participación de MTB Ride del Congo 2027 y me comprometo a cumplir sus reglas durante el evento.</span></label>
+            </div>
+            <div id="rulesParticipant2" hidden>
+              <label class="check-line"><input id="rulesConsent2" name="rulesConsent2" type="checkbox" required disabled aria-describedby="rulesHeading"><span><strong>Participante 2 *</strong> He leído y acepto el reglamento de participación de MTB Ride del Congo 2027 y me comprometo a cumplir sus reglas durante el evento.</span></label>
+            </div>
+            <p class="field-help">La aceptación del reglamento se valida en esta página; su almacenamiento en el servidor todavía no está implementado.</p>
+          </div>
           <div id="turnstileContainer">
             <p class="field-help">Completá la verificación de seguridad antes de enviar.</p>
             <div class="cf-turnstile" data-sitekey="0x4AAAAAAFi9Cbz-jAwnUR7X" data-size="flexible"></div>
