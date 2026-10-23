@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="inscripcion.css">
   <script src="inscripcion.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="registration-page">
   <header class="registration-header">
@@ -18,7 +19,7 @@
       <p class="eyebrow">Un Ride para hacer Amigos</p>
       <h1>Tu próxima aventura<br>empieza aquí.</h1>
       <p>Prepará tus datos, elegí cómo vivir la montaña y revisá tu inscripción.</p>
-      <p class="demo-notice"><strong>Formulario de prueba.</strong> Usá datos ficticios. Esta página no envía ni guarda inscripciones y no confirma pagos.</p>
+      <p class="demo-notice" id="submissionNotice"><strong>Formulario de prueba.</strong> Usá datos ficticios. El envío está desactivado: no se envían ni guardan inscripciones y no se confirman pagos.</p>
     </section>
     <div class="registration-layout">
       <form id="registrationForm">
@@ -67,7 +68,7 @@
         <section class="form-card" aria-labelledby="paymentHeading">
           <p class="step-label">03 / Información del pago</p>
           <h2 id="paymentHeading">Un pago por inscripción</h2>
-          <p class="field-help">En esta prueba no realicés pagos. La recepción del formulario no equivale a la aprobación del pago.</p>
+          <p class="field-help" id="paymentNotice">En esta prueba no realicés pagos. La recepción del formulario no equivale a la aprobación del pago.</p>
           <label for="paymentMethod">Método de pago *</label>
           <select id="paymentMethod" required><option value="">Seleccioná el método</option><option value="sinpe">SINPE Móvil</option><option value="transfer">Transferencia bancaria</option><option value="store" disabled>Establecimiento autorizado · por definir</option></select>
           <div id="paymentDetail" hidden><label id="paymentLabel" for="paymentReference"></label><input id="paymentReference" disabled required maxlength="80"><p class="field-help" id="paymentHelp"></p></div>
@@ -76,9 +77,13 @@
           <p class="step-label">04 / Revisá tus datos</p>
           <h2 id="reviewHeading">Todo listo para revisar</h2>
           <label for="comments">Comentario opcional</label><textarea id="comments" rows="3" maxlength="500" placeholder="¿Algo que debamos saber?"></textarea>
-          <p class="privacy-note">Esta demostración procesa los datos únicamente en la memoria de esta página. No utiliza almacenamiento local ni los envía a un servidor. Al recargar se pierden. Antes de abrir inscripciones reales se publicarán las condiciones de privacidad y la autorización para menores.</p>
-          <label class="check-line"><input id="demoConsent" type="checkbox" required><span>Entiendo que esta es una prueba y que no quedaré inscrito/a. *</span></label>
-          <button class="btn btn-primary review-button" type="submit">Revisar inscripción de prueba</button>
+          <p class="privacy-note" id="submissionPrivacy">En modo de prueba, los datos de inscripción se procesan únicamente en la memoria de esta página: no se envían ni se guardan en almacenamiento local y se pierden al recargar. La verificación de seguridad utiliza Cloudflare Turnstile. Antes de abrir inscripciones reales se publicarán las condiciones de privacidad y la autorización para menores.</p>
+          <label class="check-line"><input id="demoConsent" type="checkbox" required><span id="submissionConsent">Entiendo que esta es una prueba y que no quedaré inscrito/a. *</span></label>
+          <div id="turnstileContainer" hidden>
+            <p class="field-help">Completá la verificación de seguridad antes de enviar.</p>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAFi9Cbz-jAwnUR7X" data-size="flexible"></div>
+          </div>
+          <button id="submitRegistration" class="btn btn-primary review-button" type="submit">Revisar inscripción de prueba</button>
           <div id="formResult" class="form-result" role="status" aria-live="polite" tabindex="-1" hidden></div>
         </section>
       </form>
