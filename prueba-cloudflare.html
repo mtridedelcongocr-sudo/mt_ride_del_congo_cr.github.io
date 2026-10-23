@@ -1,70 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba Cloudflare Workers</title>
+    <title>Prueba Cloudflare Turnstile</title>
+
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async defer>
+    </script>
 </head>
 
 <body>
+    <h1>Prueba de seguridad MTB</h1>
 
-    <h1>Prueba de conexión con Cloudflare</h1>
+    <div
+      class="cf-turnstile"
+      data-sitekey="0x4AAAAAAFi9Cbz-jAwnUR7X">
+    </div>
 
-    <button onclick="probarConexion()">
-        Probar conexión
+    <br>
+
+    <button id="enviar" onclick="probarConexion()">
+      Probar conexión segura
     </button>
-
-    <h3>Resultado:</h3>
 
     <pre id="resultado">Esperando prueba...</pre>
 
     <script>
+      const WORKER_URL =
+        "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev";
 
-        const WORKER_URL =
-            "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev";
+      async function probarConexion() {
+        const resultado = document.getElementById("resultado");
+        const boton = document.getElementById("enviar");
 
-        async function probarConexion() {
+        const token = document.querySelector(
+          '[name="cf-turnstile-response"]'
+        )?.value;
 
-            const resultado = document.getElementById("resultado");
-
-            resultado.textContent = "Conectando con Cloudflare...";
-
-            try {
-
-                const response = await fetch(
-                    `${WORKER_URL}/api/inscripciones`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            prueba: true,
-                            mensaje: "Conexión desde GitHub Pages"
-                        })
-                    }
-                );
-
-                const data = await response.json();
-
-                resultado.textContent =
-                    "Código HTTP: " + response.status +
-                    "\n\nRespuesta:\n" +
-                    JSON.stringify(data, null, 2);
-
-            } catch (error) {
-
-                resultado.textContent =
-                    "Error de conexión:\n" + error.message;
-
-                console.error(error);
-            }
+        if (!token) {
+          resultado.textContent =
+            "Primero completá la verificación de seguridad.";
+          return;
         }
 
-    </script>
+        boton.disabled = true;
+        resultado.textContent = "Verificando...";
 
+        try {
+          const response = await fetch(
+            `${WORKER_URL}/api/inscripciones`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                prueba: true,
+                turnstileToken: token
+              })
+            }
+          );
+
+          const data = await response.json();
+
+          resultado.textContent =
+            "Código HTTP: " + response.status +
+            "\n\n" + JSON.stringify(data, null, 2);
+
+        } catch (error) {
+          resultado.textContent =
+            "Error: " + error.message;
+        } finally {
+          boton.disabled = false;
+
+          // Los tokens de Turnstile son de un solo uso.
+          if (window.turnstile) {
+            turnstile.reset();
+          }
+        }
+      }
+    </script>
 </body>
 </html>
