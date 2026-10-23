@@ -46,6 +46,42 @@ const field = (index, key) => document.getElementById(`p${index}-${key}`);
 const isPair = () => form.elements.registrationType.value === "pair";
 function activeParticipants() { return isPair() ? [1, 2] : [1]; }
 
+function construirDatosInscripcion() {
+  const datos = {
+    tipoInscripcion: isPair() ? "pair" : "individual",
+    participantes: activeParticipants()
+      .filter(index => {
+        const grupo = participants.querySelector(`[data-participant="${index}"]`);
+        return grupo && !grupo.hidden && !grupo.disabled;
+      })
+      .map(index => {
+        const texto = key => field(index, key).value.trim();
+        const jersey = field(index, "jersey").checked;
+        const participante = {
+          nombre: texto("name"),
+          identificacion: texto("identification"),
+          sexo: texto("sex"),
+          fechaNacimiento: texto("birth"),
+          telefono: texto("phone"),
+          correo: texto("email"),
+          modalidad: texto("mode"),
+          categoria: texto("category"),
+          jersey
+        };
+        if (jersey) {
+          participante.disenoJersey = texto("design");
+          participante.tallaJersey = texto("size");
+        }
+        return participante;
+      }),
+    metodoPago: document.getElementById("paymentMethod").value.trim(),
+    referenciaPago: document.getElementById("paymentReference").value.trim(),
+    comentarios: document.getElementById("comments").value.trim()
+  };
+  if (isPair()) datos.categoriaPareja = document.getElementById("pairCategory").value.trim();
+  return datos;
+}
+
 function updateCategories(index) {
   const mode = field(index, "mode").value;
   const category = field(index, "category");
@@ -74,6 +110,8 @@ function updateForm() {
     field(index, "design").disabled = !jersey || (index === 2 && !pair);
     field(index, "size").disabled = !jersey || (index === 2 && !pair);
     updateCategories(index);
+    field(index, "name").setCustomValidity(field(index, "name").value.trim().length < 3
+      ? "Ingresá un nombre completo de al menos 3 caracteres, sin contar espacios al inicio o al final." : "");
     field(index, "identification").setCustomValidity("");
     field(index, "sex").setCustomValidity("");
     const birth = field(index, "birth").value;
@@ -146,11 +184,21 @@ form.addEventListener("submit", event => {
   event.preventDefault();
   updateForm();
   if (!form.reportValidity()) return;
+  const datos = construirDatosInscripcion();
+  const cantidadEsperada = datos.tipoInscripcion === "pair" ? 2 : 1;
   const result = document.getElementById("formResult");
   result.replaceChildren();
-  const title = document.createElement("strong"); title.textContent = "Revisión de prueba completada";
-  const detail = document.createElement("p"); detail.textContent = `${activeParticipants().length} participante(s). Total estimado: ${document.getElementById("totalAmount").textContent}.`;
-  const note = document.createElement("p"); note.textContent = "No se ha enviado ninguna inscripción ni generado un número de registro. Cuando se conecte el servidor, la recepción quedará pendiente de verificación del pago.";
+  if (datos.participantes.length !== cantidadEsperada) {
+    result.classList.add("error");
+    result.textContent = "Revisá los participantes: la inscripción individual requiere una persona y la inscripción en pareja requiere dos. No se ha enviado ni guardado ninguna inscripción.";
+    result.hidden = false;
+    result.focus();
+    return;
+  }
+  result.classList.remove("error");
+  const title = document.createElement("strong"); title.textContent = "Formulario completo";
+  const detail = document.createElement("p"); detail.textContent = `${datos.participantes.length} participante(s) validado(s). La información está preparada para enviarse.`;
+  const note = document.createElement("p"); note.textContent = "Todavía no se ha enviado ni guardado ninguna inscripción. Esta revisión de prueba no confirma la inscripción ni el pago.";
   result.append(title,detail,note); result.hidden = false; result.focus();
 });
 updateForm();
