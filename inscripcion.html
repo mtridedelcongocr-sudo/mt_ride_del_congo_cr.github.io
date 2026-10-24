@@ -70,8 +70,13 @@
           <h2 id="paymentHeading">Un pago por inscripción</h2>
           <p class="field-help" id="paymentNotice">La recepción del formulario no equivale a la aprobación del pago por la organización.</p>
           <label for="paymentMethod">Método de pago *</label>
-          <select id="paymentMethod" required><option value="">Seleccioná el método</option><option value="sinpe">SINPE Móvil</option><option value="transfer">Transferencia bancaria</option><option value="store" disabled>Establecimiento autorizado · por definir</option></select>
+          <select id="paymentMethod" required><option value="">Seleccioná el método</option><option value="sinpe">SINPE Móvil</option><option value="transfer">Transferencia bancaria</option><option value="store">Pago en taller o establecimiento autorizado</option></select>
           <div id="paymentDetail" hidden><label id="paymentLabel" for="paymentReference"></label><input id="paymentReference" disabled required maxlength="80"><p class="field-help" id="paymentHelp"></p></div>
+          <div id="paymentStoreDetail" hidden>
+            <label for="paymentStore">Taller o establecimiento donde realizaste el pago *</label>
+            <select id="paymentStore" required disabled><option value="">Seleccioná un establecimiento autorizado</option></select>
+            <p class="field-help">Solo se aceptan pagos en los establecimientos de esta lista. El pago queda pendiente de verificación por la organización.</p>
+          </div>
         </section>
         <section class="form-card" aria-labelledby="reviewHeading">
           <p class="step-label">04 / Revisá tus datos</p>

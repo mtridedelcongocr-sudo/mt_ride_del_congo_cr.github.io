@@ -2,6 +2,13 @@
 
 const ENABLE_REAL_SUBMISSION = true;
 const REGISTRATION_API_URL = "https://mtb-inscripciones-api.mt-ride-del-congo-cr.workers.dev/api/inscripciones";
+const AUTHORIZED_PAYMENT_STORES = [
+  "Clico Mimi Alajuela",
+  "Ciclo Barva Heredia",
+  "Ciclo Innova bike Cartaginés",
+  "Cevichito Curridabat San José",
+  "Innova bike Santa Ana"
+];
 let submissionInProgress = false;
 let submissionConfirmed = false;
 let pendingRequest = null;
@@ -95,7 +102,7 @@ function construirDatosInscripcion() {
         return participante;
       }),
     metodoPago: document.getElementById("paymentMethod").value.trim(),
-    referenciaPago: document.getElementById("paymentReference").value.trim(),
+    referenciaPago: document.getElementById(document.getElementById("paymentMethod").value === "store" ? "paymentStore" : "paymentReference").value.trim(),
     comentarios: document.getElementById("comments").value.trim()
   };
   if (isPair()) datos.categoriaPareja = document.getElementById("pairCategory").value.trim();
@@ -167,6 +174,9 @@ function updateForm() {
     }
   }
   updatePrivacyConsents();
+  const store = document.getElementById("paymentStore");
+  store.setCustomValidity(document.getElementById("paymentMethod").value === "store" && !AUTHORIZED_PAYMENT_STORES.includes(store.value)
+    ? "Seleccioná uno de los establecimientos autorizados de la lista." : "");
   updateSummary();
 }
 
@@ -230,8 +240,11 @@ function updateSummary() {
 function updatePayment() {
   const method = document.getElementById("paymentMethod").value;
   const input = document.getElementById("paymentReference");
-  document.getElementById("paymentDetail").hidden = !method;
-  input.disabled = !method;
+  const isStore = method === "store";
+  document.getElementById("paymentDetail").hidden = !method || isStore;
+  input.disabled = !method || isStore;
+  document.getElementById("paymentStoreDetail").hidden = !isStore;
+  document.getElementById("paymentStore").disabled = !isStore;
   input.value = "";
   input.type = method === "sinpe" ? "tel" : "text";
   input.maxLength = method === "sinpe" ? 24 : 80;
@@ -370,6 +383,7 @@ form.addEventListener("submit", async event => {
     document.getElementById("formResult").focus();
   }
 });
+document.getElementById("paymentStore").append(...AUTHORIZED_PAYMENT_STORES.map(store => new Option(store, store)));
 if (ENABLE_REAL_SUBMISSION) {
   document.getElementById("submissionNotice").textContent = "La inscripción se enviará a la organización. El pago queda pendiente de verificación.";
   document.getElementById("paymentNotice").textContent = "La recepción del formulario no equivale a la aprobación del pago por la organización.";
