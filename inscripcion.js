@@ -18,11 +18,22 @@ const privacyAcceptances = new Map();
 const rulesAcceptanceIdentities = new Map();
 let submissionPrivacyRecord = null;
 
+// División Territorial Administrativa del IGN: 7 provincias y 84 cantones.
+// https://www.snitcr.go.cr/pdfs/ign_repositorio/DTA-TABLA%20POR%20PROVINCIA-CANT%C3%93N-DISTRITO%202026.pdf
+const CANTONS_BY_PROVINCE = {
+  "San José": ["San José", "Escazú", "Desamparados", "Puriscal", "Tarrazú", "Aserrí", "Mora", "Goicoechea", "Santa Ana", "Alajuelita", "Vázquez de Coronado", "Acosta", "Tibás", "Moravia", "Montes de Oca", "Turrubares", "Dota", "Curridabat", "Pérez Zeledón", "León Cortés Castro"],
+  "Alajuela": ["Alajuela", "San Ramón", "Grecia", "San Mateo", "Atenas", "Naranjo", "Palmares", "Poás", "Orotina", "San Carlos", "Zarcero", "Sarchí", "Upala", "Los Chiles", "Guatuso", "Río Cuarto"],
+  "Cartago": ["Cartago", "Paraíso", "La Unión", "Jiménez", "Turrialba", "Alvarado", "Oreamuno", "El Guarco"],
+  "Heredia": ["Heredia", "Barva", "Santo Domingo", "Santa Bárbara", "San Rafael", "San Isidro", "Belén", "Flores", "San Pablo", "Sarapiquí"],
+  "Guanacaste": ["Liberia", "Nicoya", "Santa Cruz", "Bagaces", "Carrillo", "Cañas", "Abangares", "Tilarán", "Nandayure", "La Cruz", "Hojancha"],
+  "Puntarenas": ["Puntarenas", "Esparza", "Buenos Aires", "Montes de Oro", "Osa", "Quepos", "Golfito", "Coto Brus", "Parrita", "Corredores", "Garabito", "Monteverde", "Puerto Jiménez"],
+  "Limón": ["Limón", "Pococí", "Siquirres", "Talamanca", "Matina", "Guácimo"]
+};
+
 // Configuración pública del formulario; no contiene credenciales.
 const registrationConfig = {
   prices: { competitive: 28000, recreational: 18000, jersey: 7000 },
   categories: [
-    ["juvenile", "Juvenil · 15 a 17 años"],
     ["open", "Open · 18 a 29 años"],
     ["masterA", "Master A · 30 a 39 años"],
     ["masterB", "Master B · 40 a 49 años"],
@@ -32,7 +43,6 @@ const registrationConfig = {
   ],
   ageReferenceYear: 2027,
   ageRanges: {
-    juvenile: [15, 17],
     open: [18, 29],
     masterA: [30, 39],
     masterB: [40, 49],
@@ -57,6 +67,8 @@ function participantMarkup(index) {
       <div><label for="${id}-birth">Fecha de nacimiento *</label><input id="${id}-birth" name="${id}-birth" type="date" min="1900-01-01" max="${dateMax}" required></div>
       <div><label for="${id}-phone">Teléfono *</label><input id="${id}-phone" name="${id}-phone" type="tel" autocomplete="tel" required pattern="[+0-9 ()-]{8,24}" maxlength="24" title="Ingresá un teléfono de 8 a 24 caracteres; podés incluir el código de país."></div>
       <div class="field-full"><label for="${id}-email">Correo electrónico *</label><input id="${id}-email" name="${id}-email" type="email" autocomplete="email" required maxlength="150"></div>
+      <div><label for="${id}-province">Provincia de residencia *</label><select id="${id}-province" name="${id}-province" autocomplete="address-level1" required><option value="">Seleccioná</option>${Object.keys(CANTONS_BY_PROVINCE).map(province => `<option>${province}</option>`).join("")}</select></div>
+      <div><label for="${id}-canton">Cantón de residencia *</label><select id="${id}-canton" name="${id}-canton" autocomplete="address-level2" required disabled><option value="">Elegí primero la provincia</option></select></div>
       <div class="field-full"><p class="field-help age-note" id="${id}-age" aria-live="polite">Edad de competencia al 31 de diciembre de 2027: 2027 menos el año de nacimiento.</p></div>
       <div><label for="${id}-mode">Modalidad *</label><select id="${id}-mode" name="${id}-mode" required><option value="">Seleccioná</option><option value="competitive">Competitiva · con premiación</option><option value="recreational">No competitiva · recreativa</option></select></div>
       <div><label for="${id}-category">Categoría *</label><select id="${id}-category" name="${id}-category" required><option value="">Elegí primero la modalidad</option></select></div>
@@ -91,6 +103,8 @@ function construirDatosInscripcion() {
           fechaNacimiento: texto("birth"),
           telefono: texto("phone"),
           correo: texto("email"),
+          provincia: texto("province"),
+          canton: texto("canton"),
           modalidad: texto("mode"),
           categoria: texto("category"),
           jersey
@@ -124,6 +138,19 @@ function updateCategories(index) {
   else if (options.length === 1) category.value = options[0][0];
 }
 
+function updateCantons(index) {
+  const province = field(index, "province").value;
+  const canton = field(index, "canton");
+  const options = Object.hasOwn(CANTONS_BY_PROVINCE, province) ? CANTONS_BY_PROVINCE[province] : [];
+  // Reconstruir solo al cambiar de provincia, sin interrumpir la selección del cantón.
+  if (canton.dataset.province !== province) {
+    canton.replaceChildren(new Option(options.length ? "Seleccioná" : "Elegí primero la provincia", ""), ...options.map(name => new Option(name, name)));
+    canton.dataset.province = province;
+  }
+  canton.disabled = !options.length || (index === 2 && !isPair());
+  canton.setCustomValidity(canton.value && !options.includes(canton.value) ? "Seleccioná un cantón de la provincia elegida." : "");
+}
+
 function updateForm() {
   const pair = isPair();
   const second = participants.querySelector('[data-participant="2"]');
@@ -132,6 +159,7 @@ function updateForm() {
   document.getElementById("pairCategoryWrap").hidden = !pair;
   document.getElementById("pairCategory").disabled = !pair;
   for (const index of [1, 2]) {
+    updateCantons(index);
     const jersey = field(index, "jersey").checked;
     field(index, "jerseyDetails").hidden = !jersey;
     field(index, "design").disabled = !jersey || (index === 2 && !pair);
