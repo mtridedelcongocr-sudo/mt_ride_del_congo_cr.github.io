@@ -12,7 +12,7 @@ const AUTHORIZED_PAYMENT_STORES = [
 let submissionInProgress = false;
 let submissionConfirmed = false;
 let pendingRequest = null;
-const PRIVACY_NOTICE_VERSION = "1.0";
+const PRIVACY_NOTICE_VERSION = "1.1";
 // Metadatos internos: no se envían hasta que Worker y Apps Script los soporten.
 const privacyAcceptances = new Map();
 const rulesAcceptanceIdentities = new Map();
@@ -69,6 +69,15 @@ function participantMarkup(index) {
       <div class="field-full"><label for="${id}-email">Correo electrónico *</label><input id="${id}-email" name="${id}-email" type="email" autocomplete="email" required maxlength="150"></div>
       <div><label for="${id}-province">Provincia de residencia *</label><select id="${id}-province" name="${id}-province" autocomplete="address-level1" required><option value="">Seleccioná</option>${Object.keys(CANTONS_BY_PROVINCE).map(province => `<option>${province}</option>`).join("")}</select></div>
       <div><label for="${id}-canton">Cantón de residencia *</label><select id="${id}-canton" name="${id}-canton" autocomplete="address-level2" required disabled><option value="">Elegí primero la provincia</option></select></div>
+      <section class="beneficiary-section field-full" aria-labelledby="${id}-beneficiaryHeading" aria-describedby="${id}-beneficiaryHelp">
+        <h3 id="${id}-beneficiaryHeading">Beneficiario de la póliza de seguro</h3>
+        <p class="field-help" id="${id}-beneficiaryHelp">Indicá los datos de la persona beneficiaria de la póliza de seguro correspondiente a tu participación</p>
+        <div class="field-grid">
+          <div class="field-full"><label for="${id}-beneficiaryName">Nombre completo del beneficiario *</label><input id="${id}-beneficiaryName" name="${id}-beneficiaryName" required minlength="3" maxlength="120"></div>
+          <div><label for="${id}-beneficiaryId">Número de cédula o identificación del beneficiario *</label><input id="${id}-beneficiaryId" name="${id}-beneficiaryId" required minlength="5" maxlength="30" pattern="[A-Za-z0-9 .\\-]{5,30}" title="Ingresá de 5 a 30 caracteres: letras, números, espacios, puntos o guiones."></div>
+          <div><label for="${id}-beneficiaryPhone">Teléfono del beneficiario *</label><input id="${id}-beneficiaryPhone" name="${id}-beneficiaryPhone" type="tel" required minlength="8" maxlength="24" pattern="[+0-9 \\(\\)\\-]{8,24}" title="Ingresá de 8 a 24 caracteres: números, espacios, paréntesis, guiones o el símbolo +."></div>
+        </div>
+      </section>
       <div class="field-full"><p class="field-help age-note" id="${id}-age" aria-live="polite">Edad de competencia al 31 de diciembre de 2027: 2027 menos el año de nacimiento.</p></div>
       <div><label for="${id}-mode">Modalidad *</label><select id="${id}-mode" name="${id}-mode" required><option value="">Seleccioná</option><option value="competitive">Competitiva · con premiación</option><option value="recreational">No competitiva · recreativa</option></select></div>
       <div><label for="${id}-category">Categoría *</label><select id="${id}-category" name="${id}-category" required><option value="">Elegí primero la modalidad</option></select></div>
@@ -105,6 +114,9 @@ function construirDatosInscripcion() {
           correo: texto("email"),
           provincia: texto("province"),
           canton: texto("canton"),
+          beneficiarioNombre: texto("beneficiaryName"),
+          beneficiarioCedula: texto("beneficiaryId"),
+          beneficiarioTelefono: texto("beneficiaryPhone"),
           modalidad: texto("mode"),
           categoria: texto("category"),
           jersey
@@ -168,6 +180,14 @@ function updateForm() {
     field(index, "name").setCustomValidity(field(index, "name").value.trim().length < 3
       ? "Ingresá un nombre completo de al menos 3 caracteres, sin contar espacios al inicio o al final." : "");
     field(index, "identification").setCustomValidity("");
+    for (const [key, pattern, message] of [
+      ["beneficiaryName", /^[\s\S]{3,120}$/, "Ingresá un nombre completo de 3 a 120 caracteres."],
+      ["beneficiaryId", /^[A-Za-z0-9 .-]{5,30}$/, "Ingresá una identificación de 5 a 30 caracteres: letras, números, espacios, puntos o guiones."],
+      ["beneficiaryPhone", /^[+0-9 ()-]{8,24}$/, "Ingresá un teléfono de 8 a 24 caracteres: números, espacios, paréntesis, guiones o el símbolo +."]
+    ]) {
+      const input = field(index, key);
+      input.setCustomValidity(pattern.test(input.value.trim()) ? "" : message);
+    }
     field(index, "sex").setCustomValidity("");
     const birth = field(index, "birth").value;
     const age = birth ? registrationConfig.ageReferenceYear - Number(birth.split("-")[0]) : null;
