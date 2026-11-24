@@ -6,6 +6,8 @@ const AUTHORIZED_PAYMENT_STORES = [
   "Clico Mimi Alajuela",
   "Ciclo Barva Heredia",
   "Ciclo Innova bike Cartaginés",
+  "Ciclo Víctor Vargas Grecia",
+  "Ciclo Víctor Vargas Citi mall",
   "Cevichito Curridabat San José",
   "Innova bike Santa Ana"
 ];
