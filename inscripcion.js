@@ -291,6 +291,8 @@ function updatePayment() {
   const method = document.getElementById("paymentMethod").value;
   const input = document.getElementById("paymentReference");
   const isStore = method === "store";
+  document.getElementById("sinpeNumbers").hidden = method !== "sinpe";
+  document.getElementById("transferDetails").hidden = method !== "transfer";
   document.getElementById("paymentDetail").hidden = !method || isStore;
   input.disabled = !method || isStore;
   document.getElementById("paymentStoreDetail").hidden = !isStore;
