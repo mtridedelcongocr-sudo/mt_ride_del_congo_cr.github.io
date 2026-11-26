@@ -41,9 +41,9 @@ const registrationConfig = {
     ["masterB", "Master B · 40 a 49 años"],
     ["masterC", "Master C · 50 a 59 años"],
     ["masterD", "Master D · 60 a 79 años"],
-    ["ebike", "E-Bike · sin límite de edad"]
+    ["ebike", "E-Bike · 18 años o más"]
   ],
-  ageReferenceYear: 2027,
+  eventDate: "2027-03-07",
   ageRanges: {
     open: [18, 29],
     masterA: [30, 39],
@@ -80,7 +80,7 @@ function participantMarkup(index) {
           <div><label for="${id}-beneficiaryPhone">Teléfono del beneficiario *</label><input id="${id}-beneficiaryPhone" name="${id}-beneficiaryPhone" type="tel" required minlength="8" maxlength="24" pattern="[+0-9 \\(\\)\\-]{8,24}" title="Ingresá de 8 a 24 caracteres: números, espacios, paréntesis, guiones o el símbolo +."></div>
         </div>
       </section>
-      <div class="field-full"><p class="field-help age-note" id="${id}-age" aria-live="polite">Edad de competencia al 31 de diciembre de 2027: 2027 menos el año de nacimiento.</p></div>
+      <div class="field-full"><p class="field-help age-note" id="${id}-age" aria-live="polite">La inscripción requiere 18 años cumplidos al 7 de marzo de 2027.</p></div>
       <div><label for="${id}-mode">Modalidad *</label><select id="${id}-mode" name="${id}-mode" required><option value="">Seleccioná</option><option value="competitive">Competitiva · con premiación</option><option value="recreational">No competitiva · recreativa</option></select></div>
       <div><label for="${id}-category">Categoría *</label><select id="${id}-category" name="${id}-category" required><option value="">Elegí primero la modalidad</option></select></div>
     </div>
@@ -165,6 +165,13 @@ function updateCantons(index) {
   canton.setCustomValidity(canton.value && !options.includes(canton.value) ? "Seleccioná un cantón de la provincia elegida." : "");
 }
 
+function ageOnEventDate(birth) {
+  const [birthYear, birthMonth, birthDay] = birth.split("-").map(Number);
+  const [year, month, day] = registrationConfig.eventDate.split("-").map(Number);
+  const birthdayPending = birthMonth > month || (birthMonth === month && birthDay > day);
+  return year - birthYear - Number(birthdayPending);
+}
+
 function updateForm() {
   const pair = isPair();
   const second = participants.querySelector('[data-participant="2"]');
@@ -191,22 +198,25 @@ function updateForm() {
       input.setCustomValidity(pattern.test(input.value.trim()) ? "" : message);
     }
     field(index, "sex").setCustomValidity("");
-    const birth = field(index, "birth").value;
-    const age = birth ? registrationConfig.ageReferenceYear - Number(birth.split("-")[0]) : null;
+    const birth = field(index, "birth");
+    const age = birth.value ? ageOnEventDate(birth.value) : null;
+    const minimumAgeMessage = "La inscripción requiere 18 años cumplidos al 7 de marzo de 2027.";
+    const underage = age !== null && age < 18;
+    birth.setCustomValidity(underage ? minimumAgeMessage : "");
     const category = field(index, "category");
     category.setCustomValidity("");
     let ageMessage = age === null
-      ? "Edad de competencia al 31 de diciembre de 2027: 2027 menos el año de nacimiento."
-      : `Edad de competencia al 31 de diciembre de 2027: ${age} años.`;
-    if (!pair && index === 1 && field(index, "mode").value === "competitive") {
+      ? minimumAgeMessage
+      : `Edad al 7 de marzo de 2027: ${age} años.`;
+    if (underage) {
+      ageMessage += ` ${minimumAgeMessage}`;
+    } else if (!pair && index === 1 && field(index, "mode").value === "competitive") {
       const range = registrationConfig.ageRanges[category.value];
       if (age !== null && range && (age < range[0] || age > range[1])) {
         const label = registrationConfig.categories.find(([value]) => value === category.value)[1];
-        const message = `La categoría ${label} no corresponde a tu edad de competencia (${age} años al 31 de diciembre de 2027). Seleccioná una categoría que corresponda a tu edad.`;
+        const message = `La categoría ${label} no corresponde a tu edad. Seleccioná una categoría que corresponda a tu edad al día del evento.`;
         category.setCustomValidity(message);
         ageMessage += ` ${message}`;
-      } else if (category.value === "ebike") {
-        ageMessage += " E-Bike no tiene un límite de edad definido.";
       }
     }
     field(index, "age").textContent = ageMessage;
